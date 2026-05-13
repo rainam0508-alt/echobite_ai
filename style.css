@@ -1,0 +1,173 @@
+/* Add these to your existing style.css */
+
+/* ========== SLIDER STYLES ========== */
+.slider-container {
+    position: relative;
+    width: 100%;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.slider {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+    min-width: 100%;
+    position: relative;
+}
+
+.slide img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 30px;
+}
+
+.slide-caption {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    background: linear-gradient(90deg, #ff7a00, #ff9500);
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-weight: 600;
+    margin: 0 20px;
+    border-radius: 30px;
+}
+
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    transition: 0.3s;
+}
+
+.slider-btn:hover {
+    background: #ff7a00;
+}
+
+.prev {
+    left: 15px;
+}
+
+.next {
+    right: 15px;
+}
+
+.slider-dots {
+    position: absolute;
+    bottom: 15px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.dot.active {
+    background: #ff7a00;
+    width: 25px;
+    border-radius: 10px;
+}
+
+/* ========== AUTH STATUS ========== */
+.auth-status a {
+    color: #ff7a00;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 15px;
+    border-radius: 25px;
+    transition: 0.3s;
+}
+
+.auth-status a:hover {
+    background: #ff7a00;
+    color: white;
+}
+
+.auth-status .user-name {
+    color: #ff7a00;
+    font-weight: 500;
+}
+
+/* ========== CART ITEM IMAGE FIX ========== */
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    margin: 8px 0;
+    background: #f1f5f9;
+    border-radius: 12px;
+    gap: 10px;
+}
+
+body.dark .cart-item {
+    background: #1e293b;
+}
+
+.cart-item img {
+    width: 55px;
+    height: 55px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.cart-item-info {
+    flex: 1;
+}
+
+.cart-item-actions button {
+    background: #ef4444;
+    border: none;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .slide img {
+        height: 280px;
+    }
+    
+    .slide-caption {
+        font-size: 12px;
+        margin: 0 10px;
+        bottom: 10px;
+    }
+    
+    .slider-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+    }
+    
+    .cart-item {
+        flex-wrap: wrap;
+    }
+}
