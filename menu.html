@@ -25,7 +25,7 @@ h1{
   text-align:center;
   color:#00f7ff;
   font-size:55px;
-  margin-bottom:10px;
+  margin-bottom:15px;
 }
 
 .subtitle{
@@ -86,7 +86,21 @@ h1{
 
 .rating{
   color:gold;
-  margin-bottom:10px;
+  margin-bottom:15px;
+}
+
+.size{
+  margin-bottom:15px;
+}
+
+.size select{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  outline:none;
+  background:#0f172a;
+  color:white;
 }
 
 .price{
@@ -96,40 +110,7 @@ h1{
   margin-bottom:15px;
 }
 
-.size{
-  margin-bottom:15px;
-}
-
-.size select{
-  padding:8px;
-  border-radius:8px;
-}
-
-.quantity{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:15px;
-}
-
-.quantity button{
-  width:30px;
-  height:30px;
-  border:none;
-  background:#00f7ff;
-  border-radius:5px;
-  font-size:18px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.btn-box{
-  display:flex;
-  gap:10px;
-}
-
-.cart-btn,
-.order-btn{
+.cart-btn{
   width:100%;
   padding:12px;
   border:none;
@@ -137,51 +118,12 @@ h1{
   cursor:pointer;
   font-weight:bold;
   transition:0.3s;
-}
-
-.cart-btn{
   background:#00f7ff;
   color:black;
 }
 
-.order-btn{
-  background:#22c55e;
-  color:white;
-}
-
 .cart-btn:hover{
   background:white;
-}
-
-.order-btn:hover{
-  background:#16a34a;
-}
-
-.ai-box{
-  background:#1e293b;
-  padding:25px;
-  border-radius:20px;
-  margin-bottom:50px;
-  text-align:center;
-}
-
-.ai-box h2{
-  color:#00f7ff;
-  margin-bottom:15px;
-}
-
-.ai-box p{
-  color:#cbd5e1;
-  margin-bottom:20px;
-}
-
-.ai-btn{
-  padding:12px 30px;
-  border:none;
-  border-radius:10px;
-  background:#00f7ff;
-  font-weight:bold;
-  cursor:pointer;
 }
 
 </style>
@@ -195,24 +137,6 @@ h1{
 Smart AI Food Ordering Experience
 </p>
 
-<!-- AI SECTION -->
-
-<div class="ai-box">
-
-<h2>🤖 AI Recommendation Section</h2>
-
-<p>
-Get smart food suggestions according to your mood & taste.
-</p>
-
-<button class="ai-btn">
-Get AI Recommendations
-</button>
-
-</div>
-
-<!-- MENU -->
-
 <div id="menu"></div>
 
 <script>
@@ -224,19 +148,31 @@ title:"🍕 Pizza Section",
 items:[
 {
 name:"Chicken Pizza",
-image:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"
+image:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800",
+small:699,
+medium:1199,
+large:1699
 },
 {
 name:"Pepperoni Pizza",
-image:"https://tse1.mm.bing.net/th/id/OIP.GpyurlCVLh1QGTSloYOvMAHaLH?r=0&w=682&h=1024&rs=1&pid=ImgDetMain&o=7&rm=3"
+image:"https://tse1.mm.bing.net/th/id/OIP.GpyurlCVLh1QGTSloYOvMAHaLH?r=0&w=682&h=1024&rs=1&pid=ImgDetMain&o=7&rm=3",
+small:749,
+medium:1299,
+large:1799
 },
 {
 name:"Cheese Pizza",
-image:"https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=800"
+image:"https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=800",
+small:649,
+medium:1099,
+large:1599
 },
 {
 name:"BBQ Pizza",
-image:"https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=800"
+image:"https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=800",
+small:799,
+medium:1399,
+large:1899
 }
 ]
 },
@@ -246,19 +182,31 @@ title:"🍔 Burger Section",
 items:[
 {
 name:"Zinger Burger",
-image:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800"
+image:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800",
+small:399,
+medium:599,
+large:799
 },
 {
 name:"Beef Burger",
-image:"https://images.unsplash.com/photo-1550547660-d9450f859349?w=800"
+image:"https://images.unsplash.com/photo-1550547660-d9450f859349?w=800",
+small:449,
+medium:649,
+large:849
 },
 {
 name:"Chicken Burger",
-image:"https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=800"
+image:"https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=800",
+small:399,
+medium:599,
+large:799
 },
 {
 name:"Cheese Burger",
-image:"https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800"
+image:"https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800",
+small:499,
+medium:699,
+large:899
 }
 ]
 },
@@ -268,19 +216,31 @@ title:"🍟 Fast Food Section",
 items:[
 {
 name:"French Fries",
-image:"https://images.unsplash.com/photo-1576107232684-1279f390859f?w=800"
+image:"https://images.unsplash.com/photo-1576107232684-1279f390859f?w=800",
+small:199,
+medium:299,
+large:399
 },
 {
 name:"Loaded Fries",
-image:"https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=800"
+image:"https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=800",
+small:249,
+medium:349,
+large:449
 },
 {
 name:"Nuggets",
-image:"https://images.unsplash.com/photo-1562967916-eb82221dfb92?w=800"
+image:"https://images.unsplash.com/photo-1562967916-eb82221dfb92?w=800",
+small:299,
+medium:449,
+large:599
 },
 {
 name:"Fried Chicken",
-image:"https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=800"
+image:"https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=800",
+small:499,
+medium:699,
+large:999
 }
 ]
 },
@@ -290,19 +250,31 @@ title:"🍹 Drinks Section",
 items:[
 {
 name:"Cold Coffee",
-image:"https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=800"
+image:"https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=800",
+small:120,
+medium:180,
+large:250
 },
 {
 name:"Oreo Shake",
-image:"https://images.unsplash.com/photo-1577805947697-89e18249d767?w=800"
+image:"https://images.unsplash.com/photo-1577805947697-89e18249d767?w=800",
+small:150,
+medium:220,
+large:300
 },
 {
 name:"Mint Margarita",
-image:"https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=800"
+image:"https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=800",
+small:100,
+medium:170,
+large:250
 },
 {
 name:"Fresh Lime",
-image:"https://tse1.mm.bing.net/th/id/OIP.ssf5dwm9l2vXybaUuG_XYgHaGZ?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
+image:"https://tse1.mm.bing.net/th/id/OIP.ssf5dwm9l2vXybaUuG_XYgHaGZ?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+small:90,
+medium:150,
+large:220
 }
 ]
 },
@@ -312,19 +284,31 @@ title:"🍰 Dessert Section",
 items:[
 {
 name:"Chocolate Cake",
-image:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800"
+image:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800",
+small:299,
+medium:499,
+large:699
 },
 {
 name:"Brownie",
-image:"https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=800"
+image:"https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=800",
+small:199,
+medium:299,
+large:399
 },
 {
 name:"Ice Cream",
-image:"https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=800"
+image:"https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=800",
+small:149,
+medium:249,
+large:349
 },
 {
 name:"Donuts",
-image:"https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800"
+image:"https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800",
+small:199,
+medium:299,
+large:399
 }
 ]
 }
@@ -367,39 +351,31 @@ Fresh & delicious ${item.name} made with premium ingredients.
 
 <div class="size">
 
-<select>
-<option>Small</option>
-<option>Medium</option>
-<option>Large</option>
+<select onchange="changePrice(this)">
+
+<option value="${item.small}">
+Small
+</option>
+
+<option value="${item.medium}">
+Medium
+</option>
+
+<option value="${item.large}">
+Large
+</option>
+
 </select>
 
 </div>
 
 <div class="price">
-$12
+Rs ${item.small}
 </div>
-
-<div class="quantity">
-
-<button>-</button>
-
-<span>1</span>
-
-<button>+</button>
-
-</div>
-
-<div class="btn-box">
 
 <button class="cart-btn">
 Add To Cart
 </button>
-
-<button class="order-btn">
-Order Now
-</button>
-
-</div>
 
 </div>
 
@@ -414,6 +390,14 @@ sectionHTML += `</div>`;
 menu.innerHTML += sectionHTML;
 
 });
+
+function changePrice(select){
+
+const priceBox = select.parentElement.nextElementSibling;
+
+priceBox.innerHTML = "Rs " + select.value;
+
+}
 
 </script>
 
