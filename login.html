@@ -1,112 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - EchoBite AI</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        .auth-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 100px 20px;
-        }
-        .auth-card {
-            background: white;
-            padding: 40px;
-            border-radius: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            max-width: 450px;
-            width: 100%;
-            text-align: center;
-        }
-        body.dark .auth-card {
-            background: #1e293b;
-        }
-        .auth-card h1 {
-            color: #ff7a00;
-            margin-bottom: 10px;
-        }
-        .auth-card input {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 15px;
-            outline: none;
-            font-size: 16px;
-        }
-        body.dark .auth-card input {
-            background: #0f172a;
-            border-color: #334155;
-            color: white;
-        }
-        .auth-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #ff7a00, #ff9500);
-            border: none;
-            border-radius: 15px;
-            color: white;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-        .auth-footer {
-            margin-top: 20px;
-        }
-        .auth-footer a {
-            color: #ff7a00;
-            text-decoration: none;
-        }
-        .error-msg {
-            color: #ef4444;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - EchoBite</title>
+
+<link rel="stylesheet" href="auth.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
-<nav class="navbar">
-    <div class="logo">🍔 EchoBite AI</div>
-    <div class="nav-links" id="navLinks">
-        <a href="index.html">Home</a>
-        <a href="menu.html">Menu</a>
-        <a href="cart.html">Cart</a>
-        <a href="profile.html">Profile</a>
-    </div>
-    <div class="nav-right">
-        <div class="toggle" id="darkMode"></div>
-        <div class="menu-toggle" id="menuToggle">
-            <i class="fa-solid fa-bars"></i>
-        </div>
-    </div>
-</nav>
+<div class="auth-box">
 
-<div class="auth-container">
-    <div class="auth-card">
-        <h1>Welcome Back! 👋</h1>
-        <p>Login to continue</p>
-        
-        <input type="email" id="loginEmail" placeholder="Email Address">
-        <input type="password" id="loginPassword" placeholder="Password">
-        
-        <button class="auth-btn" id="loginBtn">Login</button>
-        
-        <div class="auth-footer">
-            <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
-            <p><a href="index.html">Continue as Guest</a></p>
-        </div>
-        <div id="loginError" class="error-msg"></div>
-    </div>
+<h2>Login</h2>
+
+<form onsubmit="return loginUser(event)">
+
+<input type="email" placeholder="Enter Email" required>
+<input type="password" placeholder="Enter Password" required>
+
+<button type="submit">Login</button>
+
+</form>
+
+<div class="auth-links">
+<p>Don't have an account? <a href="signup.html">Sign Up</a></p>
 </div>
 
-<script src="script.js"></script>
+</div>
+
+<script>
+function loginUser(event){
+event.preventDefault();
+alert("Login Successful ✔");
+window.location.href = "index.html";
+}
+</script>
+
 </body>
 </html>

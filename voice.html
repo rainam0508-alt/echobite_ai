@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>EchoBite AI - Voice Recorder Module | Fast Food Commands</title>
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    /* Main Voice Card */
+    .voice-module {
+      max-width: 550px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 3rem;
+      padding: 2rem;
+      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      transition: all 0.3s;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .header h1 {
+      font-size: 2rem;
+      background: linear-gradient(135deg, #ff7a00, #ff4757);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header p {
+      color: #a0aec0;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Mic Button Area */
+    .mic-container {
+      display: flex;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+    .mic-button {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #ff7a00, #ff4757);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 20px 35px -8px rgba(255, 71, 87, 0.5);
+      position: relative;
+    }
+    .mic-button i {
+      font-size: 4rem;
+      color: white;
+      transition: 0.2s;
+    }
+    .mic-button:hover {
+      transform: scale(1.05);
+    }
+    .mic-button.listening {
+      animation: pulseMic 1.2s infinite;
+      background: linear-gradient(145deg, #22c55e, #16a34a);
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    }
+    @keyframes pulseMic {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+      }
+      70% {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 20px rgba(34, 197, 94, 0);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+      }
+    }
+
+    /* Wave Animation */
+    .wave-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin: 1.5rem 0;
+      height: 60px;
+    }
+    .wave-bar {
+      width: 6px;
+      height: 20px;
+      background: #ff7a00;
+      border-radius: 10px;
+      transition: height 0.1s ease;
+    }
+    .wave-bar.active {
+      animation: soundWave 0.4s infinite alternate;
+    }
+    @keyframes soundWave {
+      0% { height: 15px; }
+      100% { height: 50px; }
+    }
+
+    /* Status Badge */
+    .status-area {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 0.5rem 1.2rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: white;
+    }
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #94a3b8;
+    }
+    .status-dot.active {
+      background: #22c55e;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Transcript Box */
+    .transcript-box {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 1.5rem;
+      padding: 1.2rem;
+      margin: 1rem 0;
+      border-left: 4px solid #ff7a00;
+      transition: 0.2s;
+    }
+    .transcript-box.listening-active {
+      border-left-color: #22c55e;
+      background: rgba(34, 197, 94, 0.1);
+    }
+    .transcript-label {
+      color: #ff7a00;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #transcriptText {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: white;
+      word-break: break-word;
+      min-height: 60px;
+    }
+    .placeholder-text {
+      opacity: 0.6;
+      font-style: italic;
+    }
+
+    /* AI Response Box */
+    .ai-response {
+      background: linear-gradient(135deg, rgba(255, 122, 0, 0.15), rgba(255, 71, 87, 0.15));
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      margin-top: 1rem;
+      border: 1px solid rgba(255, 122, 0, 0.3);
+    }
+    .ai-response h3 {
+      color: #ffb347;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .response-text {
+      color: #e2e8f0;
+      line-height: 1.5;
+      font-size: 0.9rem;
+    }
+
+    /* Language Selector */
+    .lang-selector {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 1.2rem 0;
+    }
+    .lang-btn {
+      padding: 0.4rem 1rem;
+      border: none;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.75rem;
+      color: white;
+      transition: 0.2s;
+    }
+    .lang-btn.active {
+      background: #ff7a00;
+    }
+
+    /* Quick Commands */
+    .quick-commands {
+      margin-top: 1.5rem;
+    }
+    .quick-title {
+      color: #94a3b8;
+      font-size: 0.75rem;
+      margin-bottom: 0.8rem;
+      text-align: center;
+    }
+    .cmd-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.6rem;
+    }
+    .cmd-chip {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.5rem 0.8rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .cmd-chip:hover {
+      background: #ff7a00;
+      transform: translateY(-2px);
+    }
+
+    /* Toast */
+    .toast-voice {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1e293b;
+      color: white;
+      padding: 0.7rem 1.5rem;
+      border-radius: 60px;
+      z-index: 1000;
+      transition: 0.3s;
+      opacity: 0;
+      font-weight: 500;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+    .toast-voice.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.7rem;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+<div class="voice-module">
+  <div class="header">
+    <h1><i class="fa-solid fa-microphone-lines"></i> EchoBite Voice</h1>
+    <p>Advanced voice recorder • Fast food commands</p>
+  </div>
+
+  <!-- Mic Button -->
+  <div class="mic-container">
+    <div class="mic-button" id="micMainBtn">
+      <i class="fa-solid fa-microphone"></i>
+    </div>
+  </div>
+
+  <!-- Wave Animation -->
+  <div class="wave-container" id="waveContainer">
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+  </div>
+
+  <!-- Status -->
+  <div class="status-area">
+    <span class="status-badge" id="statusBadge">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">Ready</span>
+    </span>
+  </div>
+
+  <!-- Language Selector -->
+  <div class="lang-selector">
+    <button class="lang-btn active" data-lang="en-US">🇺🇸 English</button>
+    <button class="lang-btn" data-lang="ur-PK">🇵🇰 اردو</button>
+    <button class="lang-btn" data-lang="hi-IN">🇮🇳 हिंदी</button>
+  </div>
+
+  <!-- Transcript Box -->
+  <div class="transcript-box" id="transcriptBox">
+    <div class="transcript-label">
+      <i class="fa-regular fa-message"></i> You said:
+    </div>
+    <div id="transcriptText" class="placeholder-text">Tap the mic and speak...</div>
+  </div>
+
+  <!-- AI Response Box -->
+  <div class="ai-response" id="aiResponseBox">
+    <h3><i class="fa-solid fa-brain"></i> AI Assistant</h3>
+    <div class="response-text" id="responseText">
+      🎤 Say commands like: "Add Zinger Burger", "Remove Pizza", "Show cart", "Clear cart", or "Checkout"
+    </div>
+  </div>
+
+  <!-- Quick Commands -->
+  <div class="quick-commands">
+    <div class="quick-title"><i class="fa-regular fa-clock"></i> Quick voice commands (try these)</div>
+    <div class="cmd-grid">
+      <div class="cmd-chip" data-cmd="Add Zinger Burger"><i class="fa-solid fa-burger"></i> Add Zinger</div>
+      <div class="cmd-chip" data-cmd="Add Pepperoni Pizza"><i class="fa-solid fa-pizza-slice"></i> Add Pizza</div>
+      <div class="cmd-chip" data-cmd="Show my cart"><i class="fa-solid fa-cart-shopping"></i> Show Cart</div>
+      <div class="cmd-chip" data-cmd="Clear cart"><i class="fa-regular fa-trash-can"></i> Clear Cart</div>
+      <div class="cmd-chip" data-cmd="Checkout"><i class="fa-regular fa-credit-card"></i> Checkout</div>
+      <div class="cmd-chip" data-cmd="Remove French Fries"><i class="fa-regular fa-times-circle"></i> Remove</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <i class="fa-solid fa-microphone"></i> Click mic & speak naturally • Supports multiple languages
+  </div>
+</div>
+
+<div class="toast-voice" id="toastVoice">🎤 Listening...</div>
+
+<script>
+  // ==================== ADVANCED VOICE RECORDER MODULE ====================
+  class EchoBiteVoiceRecorder {
+    constructor() {
+      this.recognition = null;
+      this.isListening = false;
+      this.currentLang = 'en-US';
+      this.synth = window.speechSynthesis;
+      this.fastFoodItems = [
+        { name: "Zinger Burger", keywords: ["zinger", "burger", "zinger burger"] },
+        { name: "Cheese Burger", keywords: ["cheese burger", "cheese", "burger"] },
+        { name: "Double Patty Burger", keywords: ["double patty", "double burger"] },
+        { name: "Pepperoni Pizza", keywords: ["pepperoni pizza", "pepperoni", "pizza"] },
+        { name: "Margherita Pizza", keywords: ["margherita", "margherita pizza"] },
+        { name: "Chicken Wings", keywords: ["chicken wings", "wings", "wing"] },
+        { name: "French Fries", keywords: ["french fries", "fries", "fry"] },
+        { name: "Onion Rings", keywords: ["onion rings", "rings"] },
+        { name: "Coca Cola", keywords: ["coca cola", "coke", "cola"] },
+        { name: "Milkshake", keywords: ["milkshake", "shake"] },
+        { name: "Chicken Nuggets", keywords: ["nuggets", "chicken nuggets"] }
+      ];
+      this.initSpeechRecognition();
+      this.bindEvents();
+      this.setupWaveAnimation();
+    }
+
+    initSpeechRecognition() {
+      const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognitionAPI) {
+        this.showToast('❌ Browser does not support Web Speech API', 3000);
+        document.getElementById('micMainBtn').style.opacity = '0.5';
+        document.getElementById('statusText').innerText = 'Not Supported';
+        return;
+      }
+      this.recognition = new SpeechRecognitionAPI();
+      this.recognition.continuous = false;
+      this.recognition.interimResults = true;
+      this.recognition.maxAlternatives = 1;
+      this.setLanguage(this.currentLang);
+
+      // Event Handlers
+      this.recognition.onstart = () => this.onStart();
+      this.recognition.onend = () => this.onEnd();
+      this.recognition.onresult = (event) => this.onResult(event);
+      this.recognition.onerror = (event) => this.onError(event);
+    }
+
+    setLanguage(lang) {
+      if (this.recognition) {
+        this.recognition.lang = lang;
+        this.currentLang = lang;
+      }
+    }
+
+    onStart() {
+      this.isListening = true;
+      const micBtn = document.getElementById('micMainBtn');
+      micBtn.classList.add('listening');
+      micBtn.querySelector('i').className = 'fa-solid fa-microphone-slash';
+      document.getElementById('statusText').innerText = 'Listening...';
+      document.getElementById('statusDot').classList.add('active');
+      document.getElementById('transcriptBox').classList.add('listening-active');
+      this.showToast('🎙️ Listening... Speak now', 2000);
+      this.startWaveAnimation();
+    }
+
+    onEnd() {
+      this.isListening = false;
+      const micBtn = document.getElementById('micMainBtn');
+      micBtn.classList.remove('listening');
+      micBtn.querySelector('i').className = 'fa-solid fa-microphone';
+      document.getElementById('statusText').innerText = 'Ready';
+      document.getElementById('statusDot').classList.remove('active');
+      document.getElementById('transcriptBox').classList.remove('listening-active');
+      this.stopWaveAnimation();
+    }
+
+    onResult(event) {
+      let finalTranscript = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        }
+      }
+      if (finalTranscript) {
+        this.displayTranscript(finalTranscript);
+        this.processVoiceCommand(finalTranscript.toLowerCase());
+      }
+    }
+
+    onError(event) {
+      console.error('Speech error:', event.error);
+      let errorMsg = '';
+      switch(event.error) {
+        case 'no-speech': errorMsg = 'No speech detected. Please try again.'; break;
+        case 'audio-capture': errorMsg = 'Microphone not found.'; break;
+        case 'not-allowed': errorMsg = 'Microphone permission denied. Allow mic access.'; break;
+        default: errorMsg = `Error: ${event.error}`;
+      }
+      this.displayAIResponse(errorMsg, 'error');
+      this.showToast(errorMsg, 3000);
+      this.onEnd();
+    }
+
+    displayTranscript(text) {
+      const transcriptDiv = document.getElementById('transcriptText');
+      transcriptDiv.innerHTML = `<span style="font-weight:600;">${text}</span>`;
+      transcriptDiv.classList.remove('placeholder-text');
+    }
+
+    // ========== COMMAND PROCESSING WITH LOOPS ==========
+    processVoiceCommand(command) {
+      let response = '';
+      let matchedItem = null;
+
+      // Loop 1: Check for "add" or "order" commands
+      if (command.includes('add') || command.includes('order') || command.includes('want') || command.includes('get')) {
+        // Nested loop to search through food items
+        for (let food of this.fastFoodItems) {
+          for (let keyword of food.keywords) {
+            if (command.includes(keyword)) {
+              matchedItem = food.name;
+              break;
+            }
+          }
+          if (matchedItem) break;
+        }
+        
+        if (matchedItem) {
+          response = `✅ ${matchedItem} has been added to your cart! Would you like anything else?`;
+          this.showToast(`${matchedItem} added!`, 1500);
+        } else {
+          response = `❌ Sorry, I couldn't find that item. Try saying "Add Zinger Burger" or "Add Pizza".`;
+        }
+      }
+      // Loop 2: Check for "remove" commands
+      else if (command.includes('remove') || command.includes('delete') || command.includes('hatao')) {
+        for (let food of this.fastFoodItems) {
+          for (let keyword of food.keywords) {
+            if (command.includes(keyword)) {
+              matchedItem = food.name;
+              break;
+            }
+          }
+          if (matchedItem) break;
+        }
+        if (matchedItem) {
+          response = `🗑️ ${matchedItem} has been removed from your cart.`;
+        } else {
+          response = `Please specify which item to remove. For example: "Remove French Fries".`;
+        }
+      }
+      // Check for "show cart"
+      else if (command.includes('show cart') || command.includes('my cart') || command.includes('cart dikhao')) {
+        response = `🛒 Your cart currently has items. You can say "Checkout" to place your order.`;
+      }
+      // Check for "clear cart"
+      else if (command.includes('clear cart') || command.includes('empty cart')) {
+        response = `🗑️ Your cart has been cleared successfully.`;
+        this.showToast('Cart cleared', 1500);
+      }
+      // Check for "checkout"
+      else if (command.includes('checkout') || command.includes('place order')) {
+        response = `✅ Order placed successfully! Thank you for ordering with EchoBite AI. Your food will be delivered soon.`;
+        this.showToast('Order placed!', 2000);
+      }
+      // Check for greeting
+      else if (command.includes('hello') || command.includes('hi') || command.includes('hey')) {
+        const greetings = [
+          "Hello there! Welcome to EchoBite AI. How can I help you with your food order today?",
+          "Hi! I'm your voice assistant. You can say 'Add Burger' or 'Show cart' to get started.",
+          "Hey! Ready to order some delicious fast food? Just tell me what you want!"
+        ];
+        response = greetings[Math.floor(Math.random() * greetings.length)];
+      }
+      // Check for time query
+      else if (command.includes('time')) {
+        const now = new Date();
+        response = `The current time is ${now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}. Hungry for something?`;
+      }
+      // Check for joke
+      else if (command.includes('joke')) {
+        const jokes = [
+          "Why don't burgers exercise? They're already grilled to perfection! 😄",
+          "What do you call a fake noodle? An impasta! 🍝",
+          "Why did the pizza go to the dentist? It needed a filling! 🍕"
+        ];
+        response = jokes[Math.floor(Math.random() * jokes.length)];
+      }
+      // Default response
+      else {
+        response = `🎤 I heard: "${command}". Try saying "Add Zinger Burger", "Show my cart", "Clear cart", or "Checkout".`;
+      }
+
+      this.displayAIResponse(response);
+      this.speakResponse(response);
+    }
+
+    displayAIResponse(text, type = 'success') {
+      const responseDiv = document.getElementById('responseText');
+      responseDiv.innerHTML = `<i class="fa-regular fa-comment-dots"></i> ${text}`;
+    }
+
+    speakResponse(text) {
+      if (!this.synth) return;
+      this.synth.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = this.currentLang;
+      utterance.rate = 0.95;
+      utterance.pitch = 1.0;
+      this.synth.speak(utterance);
+    }
+
+    startListening() {
+      if (!this.recognition) {
+        this.showToast('Voice recognition not supported', 2000);
+        return;
+      }
+      if (this.isListening) {
+        this.recognition.stop();
+      } else {
+        try {
+          this.recognition.start();
+        } catch(e) {
+          this.showToast('Please grant microphone permission', 2000);
+        }
+      }
+    }
+
+    showToast(msg, duration = 2000) {
+      const toast = document.getElementById('toastVoice');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), duration);
+    }
+
+    setupWaveAnimation() {
+      this.waveBars = document.querySelectorAll('.wave-bar');
+    }
+
+    startWaveAnimation() {
+      this.waveBars.forEach((bar, idx) => {
+        bar.classList.add('active');
+        bar.style.animationDelay = `${idx * 0.08}s`;
+      });
+      // Simulate dynamic wave heights
+      if (this.waveInterval) clearInterval(this.waveInterval);
+      this.waveInterval = setInterval(() => {
+        if (this.isListening) {
+          this.waveBars.forEach(bar => {
+            const randomHeight = Math.floor(Math.random() * 45) + 15;
+            if (bar.classList.contains('active')) {
+              bar.style.height = `${randomHeight}px`;
+            }
+          });
+        }
+      }, 100);
+    }
+
+    stopWaveAnimation() {
+      if (this.waveInterval) clearInterval(this.waveInterval);
+      this.waveBars.forEach(bar => {
+        bar.classList.remove('active');
+        bar.style.height = '20px';
+      });
+    }
+
+    bindEvents() {
+      // Mic button click
+      document.getElementById('micMainBtn').addEventListener('click', () => this.startListening());
+      
+      // Language selector
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const lang = btn.dataset.lang;
+          this.setLanguage(lang);
+          this.showToast(`Language switched to ${btn.innerText}`, 1500);
+          this.displayAIResponse(`Language changed to ${btn.innerText}. You can now speak commands in this language.`);
+        });
+      });
+      
+      // Quick command chips
+      document.querySelectorAll('.cmd-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          const cmd = chip.dataset.cmd;
+          this.displayTranscript(cmd);
+          this.processVoiceCommand(cmd.toLowerCase());
+        });
+      });
+    }
+  }
+
+  // Initialize the voice recorder
+  const voiceRecorder = new EchoBiteVoiceRecorder();
+</script>
+</body>
+</html>
