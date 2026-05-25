@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Echo Bite Ai – Order Summary & Checkout</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fef6ef;
+      color: #2c241e;
+    }
+    header {
+      background: #fffaf5;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #f0e2d4;
+      flex-wrap: wrap;
+    }
+    .logo h1 {
+      font-size: 1.6rem;
+      background: linear-gradient(130deg, #dc2f02, #f48c06);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .back-cart a {
+      text-decoration: none;
+      color: #dc2f02;
+      font-weight: 600;
+    }
+    .checkout-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 2rem;
+    }
+    @media (max-width: 900px) {
+      .checkout-container { grid-template-columns: 1fr; }
+    }
+    /* Order summary panel (left side now) */
+    .order-summary-panel {
+      background: white;
+      border-radius: 1.8rem;
+      padding: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    }
+    .order-summary-panel h2 {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+    }
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      margin: 0.5rem 0;
+      font-size: 0.9rem;
+    }
+    .totals {
+      margin: 1rem 0;
+      padding-top: 1rem;
+      border-top: 2px solid #f0e2d4;
+    }
+    .totals div {
+      display: flex;
+      justify-content: space-between;
+      margin: 0.5rem 0;
+    }
+    .total {
+      font-weight: 800;
+      font-size: 1.2rem;
+      border-top: 1px dashed #ccc;
+      padding-top: 0.5rem;
+    }
+    /* Right panel: delivery, payment, address, map */
+    .details-panel {
+      background: white;
+      border-radius: 1.8rem;
+      padding: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 20px;
+    }
+    .delivery-section, .payment-section {
+      margin-top: 1.2rem;
+    }
+    .delivery-section h3, .payment-section h3 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .option-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .option-group label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+    }
+    .customer-form input, .customer-form textarea {
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 1rem;
+      border: 1px solid #e4cfbc;
+      margin-bottom: 0.8rem;
+      font-family: inherit;
+    }
+    .map-btn {
+      background: #f4a261;
+      border: none;
+      padding: 0.6rem;
+      border-radius: 50px;
+      width: 100%;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+      cursor: pointer;
+    }
+    .place-order-btn {
+      background: #2b7a3e;
+      color: white;
+      width: 100%;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    /* Map modal */
+    .map-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      visibility: hidden;
+      opacity: 0;
+      transition: 0.2s;
+    }
+    .map-modal.active {
+      visibility: visible;
+      opacity: 1;
+    }
+    .map-modal-content {
+      background: white;
+      width: 90%;
+      max-width: 600px;
+      border-radius: 2rem;
+      padding: 1.5rem;
+    }
+    .map-container {
+      height: 300px;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    hr { margin: 1rem 0; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo"><h1>ECHO BITE AI <span>Checkout</span></h1></div>
+  <div class="back-cart"><a href="cart.html"><i class="fas fa-chevron-left"></i> Back to Cart</a></div>
+</header>
+
+<div class="checkout-container">
+  <!-- LEFT: Order summary (Domino's style) -->
+  <div class="order-summary-panel">
+    <h2><i class="fas fa-receipt"></i> Order Summary</h2>
+    <div id="orderSummaryItems"></div>
+    <div class="totals">
+      <div>Subtotal: <span id="subtotal">Rs 0</span></div>
+      <div>Delivery fee: <span id="deliveryFeeDisplay">Rs 170</span></div>
+      <div>Platform Fee: <span id="platformFeeDisplay">Rs 9.99</span></div>
+      <div class="total">Total (incl. fees): <span id="totalAmount">Rs 0</span></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Delivery, Payment, Address, Map -->
+  <div class="details-panel">
+    <div class="delivery-section">
+      <h3><i class="fas fa-motorcycle"></i> Delivery options</h3>
+      <div class="option-group" id="deliveryOptions">
+        <label><input type="radio" name="delivery" value="standard" checked> Standard (40-60 mins) – Rs 170</label>
+        <label><input type="radio" name="delivery" value="express"> Express (20-30 mins) – Rs 250</label>
+      </div>
+    </div>
+    <div class="payment-section">
+      <h3><i class="fas fa-credit-card"></i> Payment method</h3>
+      <div class="option-group">
+        <label><input type="radio" name="payment" value="cash" checked> Cash on Delivery</label>
+        <label><input type="radio" name="payment" value="card"> Card (Online)</label>
+      </div>
+    </div>
+    <div class="customer-form">
+      <input type="text" id="fullName" placeholder="Full Name *">
+      <input type="email" id="email" placeholder="Email *">
+      <input type="tel" id="phone" maxlength="11" placeholder="Phone (11 digits) *">
+      <textarea id="address" rows="2" placeholder="Delivery Address * (House#, Street, Landmark)"></textarea>
+      <button type="button" id="openMapBtn" class="map-btn"><i class="fas fa-map-marker-alt"></i> Select on Map</button>
+    </div>
+    <button class="place-order-btn" id="placeOrderBtn">Confirm address & Place Order</button>
+  </div>
+</div>
+
+<!-- Map Modal -->
+<div id="mapModal" class="map-modal">
+  <div class="map-modal-content">
+    <h3>📍 Choose delivery location</h3>
+    <div id="mapContainer" class="map-container"></div>
+    <input type="text" id="selectedAddress" placeholder="Selected address will appear here" style="width:100%; padding:0.5rem; border-radius:1rem; border:1px solid #ccc; margin-bottom:1rem;">
+    <button id="confirmLocationBtn" class="place-order-btn" style="background:#dc2f02;">Confirm Location</button>
+    <button id="closeMapBtn" style="margin-top:0.5rem; background:#ccc; width:100%; padding:0.5rem; border:none; border-radius:50px;">Cancel</button>
+  </div>
+</div>
+
+<script>
+  // ---------- CART DATA ----------
+  function getCart() { return JSON.parse(localStorage.getItem('echo_cart')) || []; }
+
+  // ---------- RENDER ORDER SUMMARY (Left side) ----------
+  function renderOrderSummary() {
+    const cart = getCart();
+    const summaryContainer = document.getElementById('orderSummaryItems');
+    if (!summaryContainer) return;
+    if (cart.length === 0) {
+      summaryContainer.innerHTML = '<div class="empty-cart">No items in cart. <a href="cart.html">Go back</a></div>';
+      return;
+    }
+    let html = '';
+    cart.forEach(item => {
+      html += `<div class="order-item"><span>${item.quantity}x ${item.name} (${item.size || 'Regular'})</span><span>Rs ${(item.price * item.quantity).toFixed(2)}</span></div>`;
+    });
+    summaryContainer.innerHTML = html;
+    updateTotals();
+  }
+
+  function updateTotals() {
+    const cart = getCart();
+    const subtotal = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+    const deliveryRadio = document.querySelector('input[name="delivery"]:checked');
+    let deliveryFee = (deliveryRadio && deliveryRadio.value === 'express') ? 250 : 170;
+    const platformFee = 9.99;
+    const total = subtotal + deliveryFee + platformFee;
+    document.getElementById('subtotal').innerText = `Rs ${subtotal.toFixed(2)}`;
+    document.getElementById('deliveryFeeDisplay').innerText = `Rs ${deliveryFee.toFixed(2)}`;
+    document.getElementById('platformFeeDisplay').innerText = `Rs ${platformFee.toFixed(2)}`;
+    document.getElementById('totalAmount').innerText = `Rs ${total.toFixed(2)}`;
+  }
+
+  // ---------- MAP PICKER (Leaflet + OpenStreetMap) ----------
+  let map, marker;
+  function initMap() {
+    const mapDiv = document.getElementById('mapContainer');
+    if (!mapDiv) return;
+    if (map) {
+      map.invalidateSize();
+      return;
+    }
+    map = L.map('mapContainer').setView([33.6844, 73.0479], 13);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+    }).addTo(map);
+    marker = L.marker([33.6844, 73.0479], { draggable: true }).addTo(map);
+    marker.on('dragend', () => reverseGeocode());
+    map.on('click', (e) => { marker.setLatLng(e.latlng); reverseGeocode(); });
+    reverseGeocode();
+  }
+  function reverseGeocode() {
+    if (!marker) return;
+    const lat = marker.getLatLng().lat;
+    const lng = marker.getLatLng().lng;
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('selectedAddress').value = data.display_name || `${lat}, ${lng}`;
+      })
+      .catch(() => document.getElementById('selectedAddress').value = `${lat}, ${lng}`);
+  }
+  // Modal controls
+  const mapModal = document.getElementById('mapModal');
+  document.getElementById('openMapBtn').addEventListener('click', () => {
+    mapModal.classList.add('active');
+    setTimeout(() => { if (map) map.invalidateSize(); else initMap(); }, 200);
+  });
+  document.getElementById('closeMapBtn').addEventListener('click', () => mapModal.classList.remove('active'));
+  document.getElementById('confirmLocationBtn').addEventListener('click', () => {
+    const addr = document.getElementById('selectedAddress').value;
+    if (addr) document.getElementById('address').value = addr;
+    mapModal.classList.remove('active');
+  });
+
+  // ---------- PLACE ORDER (to backend) ----------
+  async function placeOrder() {
+    const cart = getCart();
+    if (cart.length === 0) { alert('Cart is empty. Add items first.'); return; }
+    const name = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const address = document.getElementById('address').value.trim();
+    if (!name || !email || !phone || !address) { alert('Please fill all customer details.'); return; }
+    if (!/^\d{11}$/.test(phone)) { alert('Phone must be exactly 11 digits.'); return; }
+    if (!/^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email)) { alert('Invalid email address.'); return; }
+    const deliveryRadio = document.querySelector('input[name="delivery"]:checked');
+    const deliveryOption = deliveryRadio ? deliveryRadio.value : 'standard';
+    const paymentRadio = document.querySelector('input[name="payment"]:checked');
+    const paymentMethod = paymentRadio ? paymentRadio.value : 'cash';
+    const deliveryFee = deliveryOption === 'express' ? 250 : 170;
+    const platformFee = 9.99;
+    const subtotal = cart.reduce((s, i) => s + (i.price * i.quantity), 0);
+    const total = subtotal + deliveryFee + platformFee;
+    const orderData = {
+      customer: { name, email, phone },
+      items: cart,
+      subtotal, deliveryFee, platformFee, total,
+      deliveryOption: deliveryOption === 'standard' ? 'Standard (40-60 mins)' : 'Express (20-30 mins)',
+      paymentMethod: paymentMethod === 'cash' ? 'Cash on Delivery' : 'Card (Online)',
+      address
+    };
+    try {
+      const response = await fetch('http://localhost:3000/api/place-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+      });
+      const result = await response.json();
+      if (result.success) {
+        alert(`🎉 Order placed!\nOrder ID: ${result.orderId}\nTotal: Rs ${total.toFixed(2)}\nThank you!`);
+        localStorage.removeItem('echo_cart');
+        window.location.href = 'index.html';
+      } else {
+        alert('Error: ' + result.message);
+      }
+    } catch (err) {
+      alert('Backend not running. Please start server.js on port 3000 (or update fetch URL). Demo mode: order saved locally.');
+      console.warn(err);
+      // For demo, still clear cart and go home
+      localStorage.removeItem('echo_cart');
+      window.location.href = 'index.html';
+    }
+  }
+
+  // Event listeners
+  document.getElementById('placeOrderBtn').addEventListener('click', placeOrder);
+  document.getElementById('deliveryOptions').addEventListener('change', () => updateTotals());
+  // initial render
+  renderOrderSummary();
+</script>
+</body>
+</html>
