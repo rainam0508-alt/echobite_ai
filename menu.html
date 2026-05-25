@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>EchoBite AI Menu</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#fff7ed;
+  color:#222;
+  padding:30px;
+}
+
+h1{
+  text-align:center;
+  color:#ff6b00;
+  font-size:55px;
+  margin-bottom:15px;
+}
+
+.subtitle{
+  text-align:center;
+  color:#555;
+  margin-bottom:50px;
+  font-size:18px;
+}
+
+/* NAVBAR (ADDED) */
+.navbar{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:25px;
+}
+
+.navbar button{
+  padding:10px 15px;
+  border:2px solid #ff6b00;
+  background:white;
+  color:#ff6b00;
+  border-radius:20px;
+  cursor:pointer;
+  font-weight:bold;
+  transition:0.3s;
+}
+
+.navbar button:hover{
+  background:#ff6b00;
+  color:white;
+}
+
+.section-title{
+  font-size:35px;
+  color:#ff6b00;
+  margin:50px 0 25px;
+}
+
+.menu-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:25px;
+}
+
+.card{
+  background:white;
+  border-radius:20px;
+  overflow:hidden;
+  transition:0.4s;
+  box-shadow:0 5px 15px rgba(0,0,0,0.15);
+  border:2px solid #ffe0c2;
+}
+
+.card:hover{
+  transform:translateY(-10px);
+  box-shadow:0 10px 25px rgba(255,107,0,0.3);
+}
+
+.card img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+}
+
+.content{
+  padding:20px;
+}
+
+.content h2{
+  color:#ff6b00;
+  margin-bottom:10px;
+}
+
+.category{
+  color:#777;
+  margin-bottom:8px;
+}
+
+.desc{
+  color:#444;
+  font-size:14px;
+  margin-bottom:10px;
+}
+
+/* ⭐ STAR FIX (ADDED) */
+.rating span{
+  font-size:22px;
+  cursor:pointer;
+  color:#ccc;
+}
+
+.rating span.active{
+  color:gold;
+}
+
+.size{
+  margin-bottom:15px;
+}
+
+.size select{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  outline:none;
+  background:#fff3e6;
+  color:#222;
+  border:2px solid #ffb26b;
+  font-size:15px;
+}
+
+.price{
+  font-size:24px;
+  color:#16a34a;
+  font-weight:bold;
+  margin-bottom:15px;
+}
+
+.cart-btn{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+  transition:0.3s;
+  background:#ff6b00;
+  color:white;
+  font-size:16px;
+}
+
+.cart-btn:hover{
+  background:#ff8c33;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>EchoBite AI</h1>
+
+<p class="subtitle">
+Smart AI Food Ordering Experience
+</p>
+
+<!-- NAVBAR (ADDED ONLY) -->
+<div class="navbar">
+  <button onclick="scrollToSection('🍕 Pizza Section')">Pizza</button>
+  <button onclick="scrollToSection('🍔 Burger Section')">Burger</button>
+  <button onclick="scrollToSection('🍟 Fast Food Section')">Fast Food</button>
+  <button onclick="scrollToSection('🍹 Drinks Section')">Drinks</button>
+  <button onclick="scrollToSection('🍰 Dessert Section')">Dessert</button>
+</div>
+
+<div id="menu"></div>
+
+<script>
+
+const menuData = [
+
+{
+title:"🍕 Pizza Section",
+items:[
+{
+name:"Chicken Pizza",
+image:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800",
+small:699,
+medium:1199,
+large:1699
+},
+{
+name:"Pepperoni Pizza",
+image:"https://tse1.mm.bing.net/th/id/OIP.GpyurlCVLh1QGTSloYOvMAHaLH?r=0&w=682&h=1024&rs=1&pid=ImgDetMain&o=7&rm=3",
+small:749,
+medium:1299,
+large:1799
+},
+{
+name:"Cheese Pizza",
+image:"https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=800",
+small:649,
+medium:1099,
+large:1599
+},
+{
+name:"BBQ Pizza",
+image:"https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=800",
+small:799,
+medium:1399,
+large:1899
+}
+]
+},
+
+{
+title:"🍔 Burger Section",
+items:[
+{
+name:"Zinger Burger",
+image:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800",
+small:399,
+medium:599,
+large:799
+},
+{
+name:"Beef Burger",
+image:"https://images.unsplash.com/photo-1550547660-d9450f859349?w=800",
+small:449,
+medium:649,
+large:849
+},
+{
+name:"Chicken Burger",
+image:"https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=800",
+small:399,
+medium:599,
+large:799
+},
+{
+name:"Cheese Burger",
+image:"https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800",
+small:499,
+medium:699,
+large:899
+}
+]
+},
+
+{
+title:"🍟 Fast Food Section",
+items:[
+{
+name:"French Fries",
+image:"https://images.unsplash.com/photo-1576107232684-1279f390859f?w=800",
+small:199,
+medium:299,
+large:399
+},
+{
+name:"Loaded Fries",
+image:"https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=800",
+small:249,
+medium:349,
+large:449
+},
+{
+name:"Nuggets",
+image:"https://images.unsplash.com/photo-1562967916-eb82221dfb92?w=800",
+small:299,
+medium:449,
+large:599
+},
+{
+name:"Fried Chicken",
+image:"https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=800",
+small:499,
+medium:699,
+large:999
+}
+]
+},
+
+{
+title:"🍹 Drinks Section",
+items:[
+{
+name:"Cold Coffee",
+image:"https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=800",
+small:120,
+medium:180,
+large:250
+},
+{
+name:"Oreo Shake",
+image:"https://images.unsplash.com/photo-1577805947697-89e18249d767?w=800",
+small:150,
+medium:220,
+large:300
+},
+{
+name:"Mint Margarita",
+image:"https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=800",
+small:100,
+medium:170,
+large:250
+},
+{
+name:"Fresh Lime",
+image:"https://tse1.mm.bing.net/th/id/OIP.ssf5dwm9l2vXybaUuG_XYgHaGZ?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+small:90,
+medium:150,
+large:220
+}
+]
+},
+
+{
+title:"🍰 Dessert Section",
+items:[
+{
+name:"Chocolate Cake",
+image:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800",
+small:299,
+medium:499,
+large:699
+},
+{
+name:"Brownie",
+image:"https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=800",
+small:199,
+medium:299,
+large:399
+},
+{
+name:"Ice Cream",
+image:"https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=800",
+small:149,
+medium:249,
+large:349
+},
+{
+name:"Donuts",
+image:"https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800",
+small:199,
+medium:299,
+large:399
+}
+]
+}
+
+];
+
+const menu = document.getElementById("menu");
+
+menuData.forEach(section => {
+
+let sectionHTML = `
+<h2 class="section-title">${section.title}</h2>
+
+<div class="menu-grid">
+`;
+
+section.items.forEach(item => {
+
+sectionHTML += `
+<div class="card">
+
+<img src="${item.image}">
+
+<div class="content">
+
+<h2>${item.name}</h2>
+
+<p class="category">
+${section.title}
+</p>
+
+<p class="desc">
+Fresh & delicious ${item.name} made with premium ingredients.
+</p>
+
+<!-- ⭐ STAR (UPDATED CLICKABLE) -->
+<div class="rating">
+  <span onclick="rate(this,1)">★</span>
+  <span onclick="rate(this,2)">★</span>
+  <span onclick="rate(this,3)">★</span>
+  <span onclick="rate(this,4)">★</span>
+  <span onclick="rate(this,5)">★</span>
+</div>
+
+<div class="size">
+
+<select onchange="changePrice(this)">
+
+<option value="${item.small}">
+Small
+</option>
+
+<option value="${item.medium}">
+Medium
+</option>
+
+<option value="${item.large}">
+Large
+</option>
+
+</select>
+
+</div>
+
+<div class="price">
+Rs ${item.small}
+</div>
+
+<button class="cart-btn">
+Add To Cart
+</button>
+
+</div>
+
+</div>
+`;
+
+});
+
+sectionHTML += `</div>`;
+
+menu.innerHTML += sectionHTML;
+
+});
+
+/* PRICE CHANGE */
+function changePrice(select){
+const priceBox = select.parentElement.nextElementSibling;
+priceBox.innerHTML = "Rs " + select.value;
+}
+
+/* ⭐ RATING FUNCTION (ADDED) */
+function rate(el,value){
+
+let parent = el.parentElement;
+let stars = parent.querySelectorAll("span");
+
+stars.forEach((s,i)=>{
+  if(i < value){
+    s.classList.add("active");
+  } else {
+    s.classList.remove("active");
+  }
+});
+
+}
+
+/* NAV SCROLL (ADDED) */
+function scrollToSection(title){
+
+let sections = document.querySelectorAll(".section-title");
+
+sections.forEach(sec=>{
+  if(sec.innerText === title){
+    sec.scrollIntoView({behavior:"smooth"});
+  }
+});
+
+}
+
+</script>
+
+</body>
+</html>
