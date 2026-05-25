@@ -1,0 +1,600 @@
+
+/* ========== GLOBAL STYLES ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+html { scroll-behavior: smooth; }
+body { background: #f8fafc; }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: #ff6b35; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #e55a2b; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    padding: 15px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.logo { font-size: 24px; font-weight: bold; color: #ff6b35; }
+.nav-links { display: flex; gap: 30px; }
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: 0.3s;
+}
+.nav-links a:hover, .nav-links a.active { color: #ff6b35; }
+.nav-right { display: flex; gap: 20px; align-items: center; }
+.cart-btn {
+    position: relative;
+    cursor: pointer;
+    font-size: 24px;
+    color: #ff6b35;
+}
+.cart-count {
+    position: absolute;
+    top: -10px;
+    right: -12px;
+    background: #ff6b35;
+    color: white;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+.toggle {
+    width: 45px;
+    height: 22px;
+    background: #ddd;
+    border-radius: 20px;
+    cursor: pointer;
+    position: relative;
+}
+.toggle::before {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 3px;
+    transition: 0.3s;
+}
+body.dark .toggle::before { transform: translateX(22px); }
+body.dark { background: #0f172a; color: white; }
+body.dark .navbar { background: rgba(15,23,42,0.9); }
+body.dark .food-card { background: #1e293b; color: white; }
+.menu-toggle { display: none; font-size: 28px; cursor: pointer; }
+
+/* Hero Slider */
+.hero-slider {
+    position: relative;
+    width: 100%;
+    height: 450px;
+    overflow: hidden;
+}
+.slider-container { display: flex; transition: transform 0.5s ease-in-out; height: 100%; }
+.slide { min-width: 100%; height: 100%; position: relative; }
+.slide img { width: 100%; height: 100%; object-fit: cover; }
+.slide-content {
+    position: absolute;
+    bottom: 80px;
+    left: 10%;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+.slide-content h2 { font-size: 48px; margin-bottom: 10px; }
+.slide-content p { font-size: 20px; }
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    transition: 0.3s;
+    z-index: 10;
+}
+.slider-btn:hover { background: #ff6b35; }
+.prev { left: 20px; }
+.next { right: 20px; }
+.slider-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    z-index: 10;
+}
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: 0.3s;
+}
+.dot.active { background: #ff6b35; width: 30px; border-radius: 10px; }
+
+/* Voice Section */
+.voice-section {
+    background: linear-gradient(135deg, #ff6b35, #ff8c42);
+    color: white;
+    text-align: center;
+    padding: 40px 20px;
+}
+.mic-btn {
+    background: white;
+    color: #ff6b35;
+    border: none;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    font-size: 35px;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    margin-bottom: 15px;
+}
+.mic-btn:hover { transform: scale(1.05); }
+.voice-result {
+    font-size: 16px;
+    background: rgba(255,255,255,0.2);
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 50px;
+    margin-top: 10px;
+}
+
+/* Section Title */
+.section-title {
+    text-align: center;
+    padding: 40px 20px 20px;
+    font-size: 32px;
+    color: #333;
+}
+body.dark .section-title { color: white; }
+
+/* Food Grid */
+.food-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    padding: 20px 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+.food-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s;
+}
+.food-card:hover { transform: translateY(-8px); box-shadow: 0 20px 35px rgba(0,0,0,0.15); }
+.food-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+.food-info { padding: 15px; }
+.food-card h3 { font-size: 18px; margin-bottom: 5px; }
+.category-badge {
+    display: inline-block;
+    background: #f0f0f0;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 11px;
+    margin: 8px 0;
+    color: #666;
+}
+.price {
+    color: #ff6b35;
+    font-size: 22px;
+    font-weight: bold;
+    margin: 8px 0;
+}
+.rating { color: #fbbf24; margin: 5px 0; }
+.food-card button {
+    background: #ff6b35;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+/* Cart Sidebar */
+.cart-sidebar {
+    position: fixed;
+    right: -400px;
+    top: 0;
+    width: 400px;
+    height: 100%;
+    background: white;
+    box-shadow: -2px 0 20px rgba(0,0,0,0.15);
+    padding: 20px;
+    transition: 0.3s;
+    z-index: 1000;
+    overflow-y: auto;
+}
+.cart-sidebar.active { right: 0; }
+.cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ff6b35;
+}
+.close-cart {
+    background: #ddd;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.cart-item {
+    border-bottom: 1px solid #eee;
+    padding: 12px 0;
+}
+.cart-item-title { font-weight: 600; }
+.cart-item-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 8px;
+}
+.cart-item-controls button {
+    background: #ff6b35;
+    border: none;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.remove-btn {
+    background: #dc2626 !important;
+    width: auto !important;
+    padding: 0 12px !important;
+    border-radius: 15px !important;
+}
+.cart-total {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 2px solid #ff6b35;
+    font-size: 20px;
+    font-weight: bold;
+}
+.checkout-btn {
+    background: #22c55e;
+    color: white;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 15px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #22c55e;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 10px;
+    display: none;
+    z-index: 1100;
+}
+.toast.show { display: block; animation: slideIn 0.3s ease; }
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Page navigation */
+.page { display: none; }
+.page.active { display: block; }
+
+/* Search & Filters (for menu page) */
+.search-box { text-align: center; margin: 20px; }
+.search-box input {
+    width: 300px;
+    padding: 10px 20px;
+    border-radius: 30px;
+    border: 1px solid #ddd;
+    outline: none;
+}
+.filter-sort-bar {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 20px 20px 30px;
+    align-items: center;
+}
+.filter-container { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.filter-btn {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 8px 22px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.3s;
+}
+.filter-btn:hover, .filter-btn.active {
+    background: #ff6b35;
+    color: white;
+    border-color: #ff6b35;
+}
+.sort-select {
+    padding: 8px 16px;
+    border-radius: 30px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+    .hero-slider { height: 300px; }
+    .slide-content h2 { font-size: 28px; }
+    .slide-content p { font-size: 14px; }
+    .slide-content { bottom: 40px; left: 5%; }
+    .cart-sidebar { width: 100%; right: -100%; }
+    .filter-btn, .sort-select { padding: 6px 15px; font-size: 12px; }
+    .search-box input { width: 80%; }
+    .nav-links {
+        position: absolute;
+        top: 70px;
+        left: -100%;
+        width: 100%;
+        background: white;
+        flex-direction: column;
+        padding: 20px;
+        transition: 0.3s;
+    }
+    .nav-links.active { left: 0; }
+    .menu-toggle { display: block; }
+}
+```
+
+---
+
+📄 script.js (Shared logic – cart, voice, slider, foods array)
+
+```javascript
+// ========== FOOD DATA (32 items) ==========
+const foods = [
+    { id: 1, name: "Zinger Burger", category: "Burger", price: 450, image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=250&fit=crop", rating: 5 },
+    { id: 2, name: "Chicken Burger", category: "Burger", price: 350, image: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=400&h=250&fit=crop", rating: 5 },
+    { id: 3, name: "Cheese Burger", category: "Burger", price: 400, image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&h=250&fit=crop", rating: 4 },
+    { id: 4, name: "Double Cheeseburger", category: "Burger", price: 550, image: "https://images.unsplash.com/photo-1608767221051-2b9d18f35a2f?w=400&h=250&fit=crop", rating: 5 },
+    { id: 5, name: "Beef Burger", category: "Burger", price: 500, image: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=400&h=250&fit=crop", rating: 4 },
+    { id: 6, name: "Veg Pizza", category: "Pizza", price: 550, image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=250&fit=crop", rating: 5 },
+    { id: 7, name: "Pepperoni Pizza", category: "Pizza", price: 650, image: "https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=400&h=250&fit=crop", rating: 5 },
+    { id: 8, name: "Chicken Tikka Pizza", category: "Pizza", price: 750, image: "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=400&h=250&fit=crop", rating: 5 },
+    { id: 9, name: "Cheese Pizza", category: "Pizza", price: 500, image: "https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=400&h=250&fit=crop", rating: 4 },
+    { id: 10, name: "White Sauce Pasta", category: "Pasta", price: 480, image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&h=250&fit=crop", rating: 4 },
+    { id: 11, name: "Red Sauce Pasta", category: "Pasta", price: 450, image: "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400&h=250&fit=crop", rating: 4 },
+    { id: 12, name: "Chicken Alfredo", category: "Pasta", price: 580, image: "https://images.unsplash.com/photo-1608756687911-aa1599ab3bd9?w=400&h=250&fit=crop", rating: 5 },
+    { id: 13, name: "Cold Coffee", category: "Drink", price: 250, image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=250&fit=crop", rating: 5 },
+    { id: 14, name: "Mint Mojito", category: "Drink", price: 220, image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400&h=250&fit=crop", rating: 4 },
+    { id: 15, name: "Strawberry Shake", category: "Drink", price: 320, image: "https://images.unsplash.com/photo-1577805947697-89e18249d767?w=400&h=250&fit=crop", rating: 4 },
+    { id: 16, name: "Chocolate Milkshake", category: "Drink", price: 350, image: "https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?w=400&h=250&fit=crop", rating: 5 },
+    { id: 17, name: "Fresh Orange Juice", category: "Drink", price: 180, image: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&h=250&fit=crop", rating: 5 },
+    { id: 18, name: "Chocolate Brownie", category: "Dessert", price: 300, image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&h=250&fit=crop", rating: 5 },
+    { id: 19, name: "Cheesecake", category: "Dessert", price: 380, image: "https://images.unsplash.com/photo-1508736793122-f516e3ba5569?w=400&h=250&fit=crop", rating: 5 },
+    { id: 20, name: "Ice Cream Sundae", category: "Dessert", price: 250, image: "https://images.unsplash.com/photo-1614707267537-1e8c2b0b3fcb?w=400&h=250&fit=crop", rating: 4 },
+    { id: 21, name: "Gulab Jamun", category: "Dessert", price: 180, image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&h=250&fit=crop", rating: 5 },
+    { id: 22, name: "Crispy Fries", category: "Snack", price: 150, image: "https://images.unsplash.com/photo-1585109649139-3667c35a7e1e?w=400&h=250&fit=crop", rating: 4 },
+    { id: 23, name: "Chicken Wings", category: "Snack", price: 320, image: "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=400&h=250&fit=crop", rating: 5 }
+];
+
+// ========== CART ==========
+let cart = JSON.parse(localStorage.getItem('echoCart')) || [];
+
+function saveCart() {
+    localStorage.setItem('echoCart', JSON.stringify(cart));
+    updateCartUI();
+}
+
+function addToCart(id, name, price, image) {
+    let existing = cart.find(item => item.id === id);
+    if (existing) existing.qty++;
+    else cart.push({ id, name, price, image, qty: 1 });
+    saveCart();
+    showToast(name + " added to cart! 🛒");
+}
+
+function updateQuantity(index, change) {
+    if (cart[index]) {
+        cart[index].qty += change;
+        if (cart[index].qty <= 0) cart.splice(index, 1);
+        saveCart();
+    }
+}
+
+function removeItem(index) {
+    cart.splice(index, 1);
+    saveCart();
+    showToast("Item removed");
+}
+
+function updateCartUI() {
+    let totalQty = cart.reduce((sum, i) => sum + i.qty, 0);
+    let countSpans = document.querySelectorAll('.cart-count');
+    countSpans.forEach(span => span.innerText = totalQty);
+
+    let cartDiv = document.getElementById('cartItemsList');
+    if (!cartDiv) return;
+    if (cart.length === 0) {
+        cartDiv.innerHTML = '<p style="text-align:center; padding:30px;">Cart is empty 🛒</p>';
+        let totalSpan = document.getElementById('cartTotal');
+        if (totalSpan) totalSpan.innerHTML = 'Total: Rs. 0';
+        return;
+    }
+    let html = '', total = 0;
+    cart.forEach((item, idx) => {
+        let itemTotal = item.price * item.qty;
+        total += itemTotal;
+        html += `
+            <div class="cart-item">
+                <div class="cart-item-title">${item.name}</div>
+                <div>Rs. ${item.price} x ${item.qty} = Rs. ${itemTotal}</div>
+                <div class="cart-item-controls">
+                    <button onclick="updateQuantity(${idx}, -1)">-</button>
+                    <span>${item.qty}</span>
+                    <button onclick="updateQuantity(${idx}, 1)">+</button>
+                    <button class="remove-btn" onclick="removeItem(${idx})">Remove</button>
+                </div>
+            </div>
+        `;
+    });
+    cartDiv.innerHTML = html;
+    let totalSpan = document.getElementById('cartTotal');
+    if (totalSpan) totalSpan.innerHTML = `Total: Rs. ${total}`;
+}
+
+function toggleCart() {
+    let sidebar = document.getElementById('cartSidebar');
+    if (sidebar) sidebar.classList.toggle('active');
+}
+
+function showToast(msg) {
+    let toast = document.getElementById('toast');
+    if (toast) {
+        toast.innerText = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+}
+
+function checkout() {
+    if (cart.length === 0) { showToast("Cart is empty!"); return; }
+    let total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+    showToast("✅ Order placed! Total: Rs." + total);
+    cart = [];
+    saveCart();
+    if (document.getElementById('cartSidebar')) toggleCart();
+}
+
+// ========== SLIDER FUNCTIONS ==========
+let currentIndex = 0;
+let slides = [];
+let totalSlides = 0;
+let autoInterval;
+
+function initSlider() {
+    slides = document.querySelectorAll('.slide');
+    totalSlides = slides.length;
+    if (totalSlides === 0) return;
+    createDots();
+    updateSlider();
+    startAutoSlide();
+    let prevBtn = document.querySelector('.prev');
+    let nextBtn = document.querySelector('.next');
+    if (prevBtn) prevBtn.onclick = () => { resetAutoSlide(); prevSlide(); };
+    if (nextBtn) nextBtn.onclick = () => { resetAutoSlide(); nextSlide(); };
+}
+
+function updateSlider() {
+    let container = document.getElementById('sliderContainer');
+    if (container) container.style.transform = `translateX(-${currentIndex * 100}%)`;
+    let dots = document.querySelectorAll('.dot');
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === currentIndex));
+}
+
+function nextSlide() { currentIndex = (currentIndex + 1) % totalSlides; updateSlider(); }
+function prevSlide() { currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; updateSlider(); }
+function createDots() {
+    let dotsContainer = document.getElementById('sliderDots');
+    if (!dotsContainer) return;
+    dotsContainer.innerHTML = '';
+    for (let i = 0; i < totalSlides; i++) {
+        let dot = document.createElement('div');
+        dot.classList.add('dot');
+        if (i === 0) dot.classList.add('active');
+        dot.onclick = () => { resetAutoSlide(); currentIndex = i; updateSlider(); };
+        dotsContainer.appendChild(dot);
+    }
+}
+function startAutoSlide() { autoInterval = setInterval(nextSlide, 4000); }
+function resetAutoSlide() { clearInterval(autoInterval); startAutoSlide(); }
+
+// ========== VOICE ==========
+function initVoice() {
+    let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        let vr = document.getElementById('voiceResult');
+        if (vr) vr.innerText = "❌ Voice not supported";
+        return;
+    }
+    let recognition = new SpeechRecognition();
+    recognition.lang = "en-PK";
+    let voiceBtn = document.getElementById('voiceBtn');
+    if (voiceBtn) {
+        voiceBtn.onclick = () => {
+            recognition.start();
+            let vr = document.getElementById('voiceResult');
+            if (vr) vr.innerText = "🎙️ Listening...";
+        };
+    }
+    recognition.onresult = (e) => {
+        let text = e.results[0][0].transcript.toLowerCase();
+        let vr = document.getElementById('voiceResult');
+        if (vr) vr.innerHTML = "🗣️ You said: " + text;
+        let found = foods.find(f => text.includes(f.name.toLowerCase()));
+        if (found) {
+            addToCart(found.id, found.name, found.price, found.image);
+            if (vr) vr.innerHTML += "<br>✅ " + found.name + " added to cart!";
+        } else if (text.includes("menu")) {
+            window.location.href = "menu.html";
+        } else if (text.includes("cart")) {
+            toggleCart();
+        } else if (text.includes("home")) {
+            window.location.href = "index.html";
+        } else {
+            if (vr) vr.innerHTML += "<br>❌ Say: pizza, burger, menu, home, or cart";
+        }
+    };
+}
+
+// ========== DARK MODE, MOBILE MENU ==========
+function initGlobalEvents() {
+    let darkToggle = document.getElementById('darkMode');
+    if (darkToggle) darkToggle.onclick = () => document.body.classList.toggle('dark');
+
+    let menuToggle = document.getElementById('menuToggle');
+    let navLinks = document.getElementById('navLinks');
+    if (menuToggle && navLinks) menuToggle.onclick = () =>
