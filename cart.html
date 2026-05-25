@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Echo Bite Ai – Your Cart</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fef6ef;
+      color: #2c241e;
+    }
+
+    header {
+      background: #fffaf5;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #f0e2d4;
+      flex-wrap: wrap;
+    }
+
+    .logo h1 {
+      font-size: 1.6rem;
+      background: linear-gradient(130deg, #dc2f02, #f48c06);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .back-home a {
+      text-decoration: none;
+      color: #dc2f02;
+      font-weight: 600;
+    }
+
+    .cart-main {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .cart-card {
+      background: white;
+      border-radius: 1.8rem;
+      padding: 1.8rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .cart-card h2 {
+      font-size: 1.6rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cart-list {
+      max-height: 550px;
+      overflow-y: auto;
+      margin-bottom: 1.8rem;
+    }
+
+    .cart-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid #f0e2d4;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .cart-item-img {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 1rem;
+    }
+
+    .item-details {
+      flex: 2;
+      min-width: 150px;
+    }
+
+    .item-details h4 {
+      font-weight: 800;
+    }
+
+    .item-size {
+      font-size: 0.75rem;
+      color: #a05e2c;
+    }
+
+    .item-qty {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 5px;
+    }
+
+    .qty-btn {
+      background: #ffdfce;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 30px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .qty-btn:hover {
+      background: #f7c9b3;
+    }
+
+    .remove-btn {
+      background: none;
+      border: none;
+      color: #dc2f02;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .item-price {
+      font-weight: 700;
+      color: #dc2f02;
+      min-width: 80px;
+      text-align: right;
+    }
+
+    .empty-cart {
+      text-align: center;
+      padding: 2rem;
+      color: #a2806e;
+    }
+
+    .cart-subtotal {
+      border-top: 2px solid #f0e2d4;
+      padding-top: 1rem;
+      margin-top: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    .proceed-btn {
+      background: #dc2f02;
+      color: white;
+      width: 100%;
+      padding: 1rem;
+      border: none;
+      border-radius: 60px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      cursor: pointer;
+      margin-top: 1.5rem;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .proceed-btn:hover {
+      background: #b82402;
+    }
+
+    .proceed-btn:disabled {
+      background: #c9ad9a;
+      cursor: not-allowed;
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+
+    .back-link a {
+      color: #a05e2c;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    @media (max-width: 650px) {
+      .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .item-price {
+        text-align: left;
+      }
+      header {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <h1>ECHO BITE AI <span>Cart</span></h1>
+  </div>
+  <div class="back-home">
+    <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Menu</a>
+  </div>
+</header>
+
+<div class="cart-main">
+  <div class="cart-card">
+    <h2><i class="fas fa-shopping-bag"></i> Your Items</h2>
+    <div id="cartItemsList" class="cart-list"></div>
+    <div id="cartSubtotalArea" class="cart-subtotal">
+      <span>Subtotal (items total)</span>
+      <span id="cartSubtotal">Rs 0</span>
+    </div>
+    <button id="proceedToCheckoutBtn" class="proceed-btn">
+      <i class="fas fa-arrow-right"></i> Proceed to Order Summary
+    </button>
+    <div class="back-link">
+      <a href="index.html"><i class="fas fa-pizza-slice"></i> Continue adding items</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ----- CART UTILITIES -----
+  function getCart() {
+    return JSON.parse(localStorage.getItem('echo_cart')) || [];
+  }
+
+  function saveCart(cart) {
+    localStorage.setItem('echo_cart', JSON.stringify(cart));
+    renderCartPage();    // refresh UI
+    updateCartSubtotal();
+  }
+
+  function updateCartSubtotal() {
+    const cart = getCart();
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const subtotalSpan = document.getElementById('cartSubtotal');
+    if (subtotalSpan) subtotalSpan.innerText = `Rs ${subtotal.toFixed(2)}`;
+    // enable/disable proceed button if cart empty
+    const proceedBtn = document.getElementById('proceedToCheckoutBtn');
+    if (proceedBtn) {
+      proceedBtn.disabled = cart.length === 0;
+    }
+  }
+
+  function renderCartPage() {
+    const cart = getCart();
+    const container = document.getElementById('cartItemsList');
+    if (!container) return;
+
+    if (cart.length === 0) {
+      container.innerHTML = `<div class="empty-cart">
+        <i class="fas fa-shopping-bag"></i> Your cart is empty. 
+        <a href="index.html" style="color:#dc2f02;">Browse menu</a>
+      </div>`;
+      updateCartSubtotal();
+      return;
+    }
+
+    let cartHtml = '';
+    cart.forEach((item, idx) => {
+      cartHtml += `
+        <div class="cart-item" data-index="${idx}">
+          <img class="cart-item-img" src="${item.image}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/70?text=Food'">
+          <div class="item-details">
+            <h4>${escapeHtml(item.name)}</h4>
+            <div class="item-size">${item.size || 'Regular'}</div>
+            <div class="item-qty">
+              <button class="qty-btn dec-qty" data-idx="${idx}">-</button>
+              <span>${item.quantity}</span>
+              <button class="qty-btn inc-qty" data-idx="${idx}">+</button>
+              <button class="remove-btn remove-item" data-idx="${idx}"><i class="fas fa-trash-alt"></i></button>
+            </div>
+          </div>
+          <div class="item-price">Rs ${(item.price * item.quantity).toFixed(2)}</div>
+        </div>
+      `;
+    });
+    container.innerHTML = cartHtml;
+
+    // attach events
+    document.querySelectorAll('.dec-qty').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        let idx = parseInt(btn.dataset.idx);
+        let cartArr = getCart();
+        if (cartArr[idx].quantity > 1) {
+          cartArr[idx].quantity--;
+          saveCart(cartArr);
+        } else {
+          cartArr.splice(idx, 1);
+          saveCart(cartArr);
+        }
+      });
+    });
+
+    document.querySelectorAll('.inc-qty').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        let idx = parseInt(btn.dataset.idx);
+        let cartArr = getCart();
+        cartArr[idx].quantity++;
+        saveCart(cartArr);
+      });
+    });
+
+    document.querySelectorAll('.remove-item').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        let idx = parseInt(btn.dataset.idx);
+        let cartArr = getCart();
+        cartArr.splice(idx, 1);
+        saveCart(cartArr);
+      });
+    });
+
+    updateCartSubtotal();
+  }
+
+  // simple escape to avoid XSS
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  // proceed to checkout page
+  document.getElementById('proceedToCheckoutBtn')?.addEventListener('click', () => {
+    const cart = getCart();
+    if (cart.length === 0) {
+      alert('Your cart is empty. Add some delicious items first!');
+      return;
+    }
+    window.location.href = 'checkout.html';
+  });
+
+  // initial render
+  renderCartPage();
+</script>
+</body>
+</html>
