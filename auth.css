@@ -82,3 +82,36 @@ text-decoration:none;
 .auth-links a:hover{
 text-decoration:underline;
 }
+.cartoon-illustration {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+    background: #ffe0b5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: bounce 2s infinite;
+}
+.cartoon-illustration i {
+    font-size: 60px;
+    color: #ff6b35;
+}
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+.back-home-btn {
+    display: inline-block;
+    padding: 10px 24px;
+    background: #ff6b35;
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+.back-home-btn:hover {
+    background: #e55a2b;
+    transform: translateY(-2px);
+}

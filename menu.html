@@ -182,7 +182,20 @@ Smart AI Food Ordering Experience
   <button onclick="scrollToSection('🍹 Drinks Section')">Drinks</button>
   <button onclick="scrollToSection('🍰 Dessert Section')">Dessert</button>
 </div>
-
+<a href="index.html" style="
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:#ff6b35;
+  color:white;
+  font-weight:700;
+  text-decoration:none;
+  padding:10px 20px;
+  border-radius:50px;
+  margin:15px 0 0 20px;
+  font-size:0.95rem;
+  box-shadow:0 4px 15px rgba(255,107,53,0.4);
+">&#8592; Back to Home</a>
 <div id="menu"></div>
 
 <script>
@@ -474,6 +487,38 @@ sections.forEach(sec=>{
 });
 
 }
+/* ADD TO CART - MENU PAGE */
+document.addEventListener("click", function(e) {
+  if(e.target.classList.contains("cart-btn")) {
+    
+    let card = e.target.closest(".card");
+    let name = card.querySelector("h2").innerText;
+    let priceText = card.querySelector(".price").innerText;
+    let price = parseInt(priceText.replace(/[^0-9]/g, ""));
+    let image = card.querySelector("img").src;
+
+    let cart = JSON.parse(localStorage.getItem("echo_cart")) || [];
+    
+    let existingItem = cart.find(i => i.name === name);
+    if(existingItem){
+      existingItem.quantity++;
+    } else {
+      cart.push({ name, price, image, quantity: 1 });
+    }
+
+    localStorage.setItem("echo_cart", JSON.stringify(cart));
+
+    e.target.innerText = "✓ Added!";
+    e.target.style.background = "#28a745";
+
+    setTimeout(() => {
+      e.target.innerText = "Add To Cart";
+      e.target.style.background = "";
+    }, 1500);
+
+    alert(name + " added to cart! 🛒");
+  }
+});
 
 </script>
 

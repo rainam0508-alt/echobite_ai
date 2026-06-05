@@ -275,6 +275,7 @@ color:#ccc;
 .hero-content h1{font-size:2.2rem;}
 }
 
+
 </style>
 </head>
 
@@ -283,26 +284,45 @@ color:#ccc;
 <!-- NAVBAR -->
 <nav class="navbar">
 
-<div class="logo">
+<div class="logo" style="margin-right:20px;">
 <i class="fas fa-robot"></i>
 Echo<span>Bite</span>
 </div>
 
 <ul class="nav-links">
-<li><a href="#">Home</a></li>
-<li><a href="#categories">Categories</a></li>
-<li><a href="#food">Food</a></li>
-<li><a href="#contact">Contact</a></li>
+
+<li>
+<a href="index.html">
+Home
+</a>
+</li>
+
+<li>
+<a href="menu.html">
+Menu
+</a>
+</li>
+
+<li>
+<a href="cart.html">
+Cart
+</a>
+</li>
+
+
+<li>
+<a href="#contact">
+Contact
+</a>
+</li>
+<li><a href="#about">About</a></li>
+<li><a href="#services">Our Services</a></li>
+
 </ul>
 
-<div class="search-box">
-<i class="fas fa-search"></i>
-<input type="text" placeholder="Search food...">
-<i class="fas fa-microphone"></i>
 </div>
 
 <div class="nav-buttons">
-<button class="voice-btn"><i class="fas fa-microphone"></i></button>
 <a href="login.html" class="login-btn">Login</a>
 </div>
 
@@ -322,12 +342,15 @@ Echo<span>Bite</span>
 <div class="slide" style="background-image:url('https://images.pexels.com/photos/315755/pexels-photo-315755.jpeg')"></div>
 
 </div>
-
 <div class="hero-content">
-<h1>Order Food With AI Voice</h1>
-<p>Fast, smart and seamless food ordering experience</p>
-</div>
-
+      <h1 class="hero-title">Order Food With AI Voice</h1>
+      <p class="hero-subtitle">Fast, smart and seamless food ordering experience</p>
+      
+     <button class="voice-order-btn" onclick="location.href='voice.html'">
+    Tap to Order with Voice
+</button>
+    </div>
+  </section>
 </section>
 
 <!-- CATEGORIES -->
@@ -363,7 +386,7 @@ Echo<span>Bite</span>
 <section class="section" id="food">
 <h2 class="section-title">Best Sellers</h2>
 
-<div class="products-grid">
+<div class="products-grid" id="foodGrid">
 
 <div class="product-card">
 <img src="https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg">
@@ -421,7 +444,46 @@ Echo<span>Bite</span>
 
 </div>
 </section>
+<!-- ABOUT SECTION -->
+<section class="section" id="about">
+<h2 class="section-title">About Us</h2>
+<div style="background:white;padding:40px;border-radius:30px;box-shadow:0 10px 30px rgba(0,0,0,0.08);">
+  <h3 style="font-size:1.5rem;margin-bottom:15px;">Who We Are 🍽️</h3>
+  <p style="color:#555;line-height:1.8;">EchoBite AI is a smart food ordering platform that uses artificial intelligence to make your food experience faster, easier and more delicious. Order with voice, browse our menu, and get your favorite food delivered!</p>
+</div>
+</section>
 
+<!-- SERVICES SECTION -->
+<section class="section" id="services">
+<h2 class="section-title">Our Services</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:25px;">
+
+  <div style="background:white;padding:30px;border-radius:25px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.08);">
+    <div style="font-size:2.5rem;">🎙️</div>
+    <h3 style="margin:10px 0;">Voice Ordering</h3>
+    <p style="color:#777;font-size:0.9rem;">Order food with just your voice using AI technology</p>
+  </div>
+
+  <div style="background:white;padding:30px;border-radius:25px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.08);">
+    <div style="font-size:2.5rem;">🚀</div>
+    <h3 style="margin:10px 0;">Fast Delivery</h3>
+    <p style="color:#777;font-size:0.9rem;">Quick and reliable delivery right to your door</p>
+  </div>
+
+  <div style="background:white;padding:30px;border-radius:25px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.08);">
+  <div style="font-size:2.5rem;">🥗</div>
+  <h3 style="margin:10px 0;">Fresh Food</h3>
+  <p style="color:#777;font-size:0.9rem;">Prepared with high-quality and fresh ingredients everyday</p>
+</div>
+
+  <div style="background:white;padding:30px;border-radius:25px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.08);">
+    <div style="font-size:2.5rem;">⏰</div>
+    <h3 style="margin:10px 0;">24/7 Support</h3>
+    <p style="color:#777;font-size:0.9rem;">We are always here to help you anytime</p>
+  </div>
+
+</div>
+</section>
 <!-- CONTACT -->
 <section class="section" id="contact">
 <h2 class="section-title">Contact Us</h2>
@@ -432,7 +494,7 @@ Echo<span>Bite</span>
 <h3>Get In Touch</h3>
 <div class="contact-info"><i class="fas fa-phone"></i> +92 300 1234567</div>
 <div class="contact-info"><i class="fas fa-envelope"></i> support@echobite.ai</div>
-<div class="contact-info"><i class="fas fa-location-dot"></i> Rawalpindi, Pakistan</div>
+<div class="contact-info"><i class="fas fa-location-dot"></i> Islamabad, Pakistan</div>
 </div>
 
 </div>
@@ -455,6 +517,75 @@ slides[index].classList.remove("active");
 index = (index + 1) % slides.length;
 slides[index].classList.add("active");
 }, 3000);
+// ADD TO CART
+let cart = JSON.parse(localStorage.getItem("echo_cart"))||[];
+
+document.querySelectorAll(".add-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    let card = btn.closest(".product-card");
+    let name = card.querySelector("h3").innerText;
+    let price = card.querySelector(".price").innerText;
+
+    let priceNum = parseInt(price.replace(/[^0-9]/g, ""));
+let image = card.querySelector("img").src;
+
+let existingItem = cart.find(i => i.name === name);
+if(existingItem){
+  existingItem.quantity++;
+} else {
+  cart.push({ name, price: priceNum, image, quantity: 1 });
+}
+    localStorage.setItem("echo_cart", JSON.stringify(cart));
+
+    btn.innerText = "✓ Added!";
+    btn.style.background = "#28a745";
+
+    setTimeout(() => {
+      btn.innerText = "Add to Cart";
+      btn.style.background = "#ff6b35";
+    }, 1500);
+
+    alert(name + " cart mein add ho gaya! 🛒\nTotal items: " + cart.length);
+});
+  
+});
+
+
+// SEARCH BAR FUNCTION
+
+const searchInput =
+document.getElementById("searchInput");
+
+const productCards =
+document.querySelectorAll(".product-card");
+
+searchInput.addEventListener("keyup", () => {
+
+let searchValue =
+searchInput.value.toLowerCase();
+
+productCards.forEach(card => {
+
+let productName =
+card.querySelector("h3")
+.innerText.toLowerCase();
+
+if(productName.includes(searchValue)){
+
+card.style.display = "";
+
+}
+else{
+
+card.style.display = "none";
+
+}
+
+});
+
+});
+
+
 
 </script>
 

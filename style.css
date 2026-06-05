@@ -164,6 +164,22 @@ body.dark .food-card { background: #1e293b; color: white; }
     border-radius: 50px;
     margin-top: 10px;
 }
+.voice-btn{
+    background: #ff6b35;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 30px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: 0.3s;
+}
+
+.voice-btn:hover{
+    transform: translateY(-3px);
+}
 
 /* Section Title */
 .section-title {
@@ -387,214 +403,24 @@ body.dark .section-title { color: white; }
     .nav-links.active { left: 0; }
     .menu-toggle { display: block; }
 }
-```
 
----
 
-📄 script.js (Shared logic – cart, voice, slider, foods array)
-
-```javascript
-// ========== FOOD DATA (32 items) ==========
-const foods = [
-    { id: 1, name: "Zinger Burger", category: "Burger", price: 450, image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=250&fit=crop", rating: 5 },
-    { id: 2, name: "Chicken Burger", category: "Burger", price: 350, image: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=400&h=250&fit=crop", rating: 5 },
-    { id: 3, name: "Cheese Burger", category: "Burger", price: 400, image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&h=250&fit=crop", rating: 4 },
-    { id: 4, name: "Double Cheeseburger", category: "Burger", price: 550, image: "https://images.unsplash.com/photo-1608767221051-2b9d18f35a2f?w=400&h=250&fit=crop", rating: 5 },
-    { id: 5, name: "Beef Burger", category: "Burger", price: 500, image: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=400&h=250&fit=crop", rating: 4 },
-    { id: 6, name: "Veg Pizza", category: "Pizza", price: 550, image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=250&fit=crop", rating: 5 },
-    { id: 7, name: "Pepperoni Pizza", category: "Pizza", price: 650, image: "https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=400&h=250&fit=crop", rating: 5 },
-    { id: 8, name: "Chicken Tikka Pizza", category: "Pizza", price: 750, image: "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=400&h=250&fit=crop", rating: 5 },
-    { id: 9, name: "Cheese Pizza", category: "Pizza", price: 500, image: "https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=400&h=250&fit=crop", rating: 4 },
-    { id: 10, name: "White Sauce Pasta", category: "Pasta", price: 480, image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&h=250&fit=crop", rating: 4 },
-    { id: 11, name: "Red Sauce Pasta", category: "Pasta", price: 450, image: "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400&h=250&fit=crop", rating: 4 },
-    { id: 12, name: "Chicken Alfredo", category: "Pasta", price: 580, image: "https://images.unsplash.com/photo-1608756687911-aa1599ab3bd9?w=400&h=250&fit=crop", rating: 5 },
-    { id: 13, name: "Cold Coffee", category: "Drink", price: 250, image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=250&fit=crop", rating: 5 },
-    { id: 14, name: "Mint Mojito", category: "Drink", price: 220, image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400&h=250&fit=crop", rating: 4 },
-    { id: 15, name: "Strawberry Shake", category: "Drink", price: 320, image: "https://images.unsplash.com/photo-1577805947697-89e18249d767?w=400&h=250&fit=crop", rating: 4 },
-    { id: 16, name: "Chocolate Milkshake", category: "Drink", price: 350, image: "https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?w=400&h=250&fit=crop", rating: 5 },
-    { id: 17, name: "Fresh Orange Juice", category: "Drink", price: 180, image: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&h=250&fit=crop", rating: 5 },
-    { id: 18, name: "Chocolate Brownie", category: "Dessert", price: 300, image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&h=250&fit=crop", rating: 5 },
-    { id: 19, name: "Cheesecake", category: "Dessert", price: 380, image: "https://images.unsplash.com/photo-1508736793122-f516e3ba5569?w=400&h=250&fit=crop", rating: 5 },
-    { id: 20, name: "Ice Cream Sundae", category: "Dessert", price: 250, image: "https://images.unsplash.com/photo-1614707267537-1e8c2b0b3fcb?w=400&h=250&fit=crop", rating: 4 },
-    { id: 21, name: "Gulab Jamun", category: "Dessert", price: 180, image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&h=250&fit=crop", rating: 5 },
-    { id: 22, name: "Crispy Fries", category: "Snack", price: 150, image: "https://images.unsplash.com/photo-1585109649139-3667c35a7e1e?w=400&h=250&fit=crop", rating: 4 },
-    { id: 23, name: "Chicken Wings", category: "Snack", price: 320, image: "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=400&h=250&fit=crop", rating: 5 }
-];
-
-// ========== CART ==========
-let cart = JSON.parse(localStorage.getItem('echoCart')) || [];
-
-function saveCart() {
-    localStorage.setItem('echoCart', JSON.stringify(cart));
-    updateCartUI();
-}
-
-function addToCart(id, name, price, image) {
-    let existing = cart.find(item => item.id === id);
-    if (existing) existing.qty++;
-    else cart.push({ id, name, price, image, qty: 1 });
-    saveCart();
-    showToast(name + " added to cart! 🛒");
-}
-
-function updateQuantity(index, change) {
-    if (cart[index]) {
-        cart[index].qty += change;
-        if (cart[index].qty <= 0) cart.splice(index, 1);
-        saveCart();
-    }
-}
-
-function removeItem(index) {
-    cart.splice(index, 1);
-    saveCart();
-    showToast("Item removed");
-}
-
-function updateCartUI() {
-    let totalQty = cart.reduce((sum, i) => sum + i.qty, 0);
-    let countSpans = document.querySelectorAll('.cart-count');
-    countSpans.forEach(span => span.innerText = totalQty);
-
-    let cartDiv = document.getElementById('cartItemsList');
-    if (!cartDiv) return;
-    if (cart.length === 0) {
-        cartDiv.innerHTML = '<p style="text-align:center; padding:30px;">Cart is empty 🛒</p>';
-        let totalSpan = document.getElementById('cartTotal');
-        if (totalSpan) totalSpan.innerHTML = 'Total: Rs. 0';
-        return;
-    }
-    let html = '', total = 0;
-    cart.forEach((item, idx) => {
-        let itemTotal = item.price * item.qty;
-        total += itemTotal;
-        html += `
-            <div class="cart-item">
-                <div class="cart-item-title">${item.name}</div>
-                <div>Rs. ${item.price} x ${item.qty} = Rs. ${itemTotal}</div>
-                <div class="cart-item-controls">
-                    <button onclick="updateQuantity(${idx}, -1)">-</button>
-                    <span>${item.qty}</span>
-                    <button onclick="updateQuantity(${idx}, 1)">+</button>
-                    <button class="remove-btn" onclick="removeItem(${idx})">Remove</button>
-                </div>
-            </div>
-        `;
-    });
-    cartDiv.innerHTML = html;
-    let totalSpan = document.getElementById('cartTotal');
-    if (totalSpan) totalSpan.innerHTML = `Total: Rs. ${total}`;
-}
-
-function toggleCart() {
-    let sidebar = document.getElementById('cartSidebar');
-    if (sidebar) sidebar.classList.toggle('active');
-}
-
-function showToast(msg) {
-    let toast = document.getElementById('toast');
-    if (toast) {
-        toast.innerText = msg;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2000);
-    }
-}
-
-function checkout() {
-    if (cart.length === 0) { showToast("Cart is empty!"); return; }
-    let total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-    showToast("✅ Order placed! Total: Rs." + total);
-    cart = [];
-    saveCart();
-    if (document.getElementById('cartSidebar')) toggleCart();
-}
-
-// ========== SLIDER FUNCTIONS ==========
-let currentIndex = 0;
-let slides = [];
-let totalSlides = 0;
-let autoInterval;
-
-function initSlider() {
-    slides = document.querySelectorAll('.slide');
-    totalSlides = slides.length;
-    if (totalSlides === 0) return;
-    createDots();
-    updateSlider();
-    startAutoSlide();
-    let prevBtn = document.querySelector('.prev');
-    let nextBtn = document.querySelector('.next');
-    if (prevBtn) prevBtn.onclick = () => { resetAutoSlide(); prevSlide(); };
-    if (nextBtn) nextBtn.onclick = () => { resetAutoSlide(); nextSlide(); };
-}
-
-function updateSlider() {
-    let container = document.getElementById('sliderContainer');
-    if (container) container.style.transform = `translateX(-${currentIndex * 100}%)`;
-    let dots = document.querySelectorAll('.dot');
-    dots.forEach((dot, i) => dot.classList.toggle('active', i === currentIndex));
-}
-
-function nextSlide() { currentIndex = (currentIndex + 1) % totalSlides; updateSlider(); }
-function prevSlide() { currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; updateSlider(); }
-function createDots() {
-    let dotsContainer = document.getElementById('sliderDots');
-    if (!dotsContainer) return;
-    dotsContainer.innerHTML = '';
-    for (let i = 0; i < totalSlides; i++) {
-        let dot = document.createElement('div');
-        dot.classList.add('dot');
-        if (i === 0) dot.classList.add('active');
-        dot.onclick = () => { resetAutoSlide(); currentIndex = i; updateSlider(); };
-        dotsContainer.appendChild(dot);
-    }
-}
-function startAutoSlide() { autoInterval = setInterval(nextSlide, 4000); }
-function resetAutoSlide() { clearInterval(autoInterval); startAutoSlide(); }
-
-// ========== VOICE ==========
-function initVoice() {
-    let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        let vr = document.getElementById('voiceResult');
-        if (vr) vr.innerText = "❌ Voice not supported";
-        return;
-    }
-    let recognition = new SpeechRecognition();
-    recognition.lang = "en-PK";
-    let voiceBtn = document.getElementById('voiceBtn');
-    if (voiceBtn) {
-        voiceBtn.onclick = () => {
-            recognition.start();
-            let vr = document.getElementById('voiceResult');
-            if (vr) vr.innerText = "🎙️ Listening...";
-        };
-    }
-    recognition.onresult = (e) => {
-        let text = e.results[0][0].transcript.toLowerCase();
-        let vr = document.getElementById('voiceResult');
-        if (vr) vr.innerHTML = "🗣️ You said: " + text;
-        let found = foods.find(f => text.includes(f.name.toLowerCase()));
-        if (found) {
-            addToCart(found.id, found.name, found.price, found.image);
-            if (vr) vr.innerHTML += "<br>✅ " + found.name + " added to cart!";
-        } else if (text.includes("menu")) {
-            window.location.href = "menu.html";
-        } else if (text.includes("cart")) {
-            toggleCart();
-        } else if (text.includes("home")) {
-            window.location.href = "index.html";
-        } else {
-            if (vr) vr.innerHTML += "<br>❌ Say: pizza, burger, menu, home, or cart";
-        }
-    };
-}
-
-// ========== DARK MODE, MOBILE MENU ==========
-function initGlobalEvents() {
-    let darkToggle = document.getElementById('darkMode');
-    if (darkToggle) darkToggle.onclick = () => document.body.classList.toggle('dark');
-
-    let menuToggle = document.getElementById('menuToggle');
-    let navLinks = document.getElementById('navLinks');
-    if (menuToggle && navLinks) menuToggle.onclick = () =>
+ @keyframes pulse-animation {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 15px rgba(255, 74, 90, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(255, 74, 90, 0.7);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 15px rgba(255, 74, 90, 0.4);
+  }
+  /* Top chote mic ko screen se hide karne ke liye */
+.voice-btn {
+    display: none !important;
+} 
+ }  
+ 
