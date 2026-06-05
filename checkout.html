@@ -12,17 +12,19 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', sans-serif;
-      background: #fef6ef;
+      background: linear-gradient(135deg, #ff6b00, #ff8c33, #ffaa66);
+      min-height: 100vh;
       color: #2c241e;
     }
     header {
-      background: #fffaf5;
+      background: rgba(255, 255, 255, 0.95);
       padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #f0e2d4;
+      border-bottom: 1px solid #ffe0c2;
       flex-wrap: wrap;
+      backdrop-filter: blur(5px);
     }
     .logo h1 {
       font-size: 1.6rem;
@@ -52,11 +54,12 @@
       background: white;
       border-radius: 1.8rem;
       padding: 1.5rem;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
     }
     .order-summary-panel h2 {
       font-size: 1.4rem;
       margin-bottom: 1rem;
+      color: #ff6b00;
     }
     .order-item {
       display: flex;
@@ -79,13 +82,14 @@
       font-size: 1.2rem;
       border-top: 1px dashed #ccc;
       padding-top: 0.5rem;
+      color: #ff6b00;
     }
     /* Right panel: delivery, payment, address, map */
     .details-panel {
       background: white;
       border-radius: 1.8rem;
       padding: 1.5rem;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
       position: sticky;
       top: 20px;
     }
@@ -95,6 +99,7 @@
     .delivery-section h3, .payment-section h3 {
       font-size: 1rem;
       margin-bottom: 0.5rem;
+      color: #ff6b00;
     }
     .option-group {
       display: flex;
@@ -115,8 +120,12 @@
       margin-bottom: 0.8rem;
       font-family: inherit;
     }
+    .customer-form input:focus, .customer-form textarea:focus {
+      outline: none;
+      border-color: #ff6b00;
+    }
     .map-btn {
-      background: #f4a261;
+      background: #ff6b00;
       border: none;
       padding: 0.6rem;
       border-radius: 50px;
@@ -124,6 +133,11 @@
       font-weight: 600;
       margin-bottom: 0.8rem;
       cursor: pointer;
+      color: white;
+      transition: 0.2s;
+    }
+    .map-btn:hover {
+      background: #e05a00;
     }
     .place-order-btn {
       background: #2b7a3e;
@@ -135,6 +149,10 @@
       font-weight: 800;
       font-size: 1rem;
       cursor: pointer;
+      transition: 0.2s;
+    }
+    .place-order-btn:hover {
+      background: #1f5f2e;
     }
     /* Map modal */
     .map-modal {
@@ -163,12 +181,25 @@
       border-radius: 2rem;
       padding: 1.5rem;
     }
+    .map-modal-content h3 {
+      color: #ff6b00;
+    }
     .map-container {
       height: 300px;
       border-radius: 1rem;
       margin: 1rem 0;
     }
     hr { margin: 1rem 0; }
+    .empty-cart {
+      text-align: center;
+      padding: 2rem;
+      color: #a2806e;
+    }
+    .empty-cart a {
+      color: #ff6b00;
+      text-decoration: none;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -223,7 +254,7 @@
     <h3>📍 Choose delivery location</h3>
     <div id="mapContainer" class="map-container"></div>
     <input type="text" id="selectedAddress" placeholder="Selected address will appear here" style="width:100%; padding:0.5rem; border-radius:1rem; border:1px solid #ccc; margin-bottom:1rem;">
-    <button id="confirmLocationBtn" class="place-order-btn" style="background:#dc2f02;">Confirm Location</button>
+    <button id="confirmLocationBtn" class="place-order-btn" style="background:#ff6b00;">Confirm Location</button>
     <button id="closeMapBtn" style="margin-top:0.5rem; background:#ccc; width:100%; padding:0.5rem; border:none; border-radius:50px;">Cancel</button>
   </div>
 </div>
@@ -238,7 +269,7 @@
     const summaryContainer = document.getElementById('orderSummaryItems');
     if (!summaryContainer) return;
     if (cart.length === 0) {
-      summaryContainer.innerHTML = '<div class="empty-cart">No items in cart. <a href="cart.html">Go back</a></div>';
+      summaryContainer.innerHTML = '<div class="empty-cart">No items in cart. <a href="cart.html">Go back to cart</a></div>';
       return;
     }
     let html = '';
@@ -346,7 +377,7 @@
         alert('Error: ' + result.message);
       }
     } catch (err) {
-      alert('Backend not running. Please start server.js on port 3000 (or update fetch URL). Demo mode: order saved locally.');
+      alert('Backend not running. Please start server.js on port 3000.\n\nDemo mode: Order saved locally and cart cleared.');
       console.warn(err);
       // For demo, still clear cart and go home
       localStorage.removeItem('echo_cart');
