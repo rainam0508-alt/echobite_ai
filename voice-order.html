@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>EchoBite AI - Voice Order</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body {
+      background: linear-gradient(135deg, #ff6b00, #ff8c33, #ffaa66);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container { max-width: 750px; margin: 0 auto; }
+    .voice-card {
+      background: white;
+      border-radius: 2rem;
+      padding: 1.5rem;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    .logo h1 {
+      font-size: 1.8rem;
+      color: #ff6b00;
+    }
+    .logo p { color: #666; font-size: 0.75rem; margin-top: 0.3rem; }
+    .mic-container { display: flex; justify-content: center; margin: 1rem 0; }
+    .mic-button {
+      width: 110px; height: 110px; border-radius: 50%;
+      background: #ff6b00;
+      display: flex; justify-content: center; align-items: center;
+      cursor: pointer; transition: 0.3s;
+      box-shadow: 0 10px 25px rgba(255,107,0,0.4);
+    }
+    .mic-button i { font-size: 3rem; color: white; }
+    .mic-button.listening {
+      animation: pulseMic 1.2s infinite;
+      background: #22c55e;
+      box-shadow: 0 0 0 0 rgba(34,197,94,0.7);
+    }
+    @keyframes pulseMic {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(34,197,94,0.7); }
+      70% { transform: scale(1.02); box-shadow: 0 0 0 20px rgba(34,197,94,0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+    }
+    .wave-container { display: flex; justify-content: center; gap: 6px; margin: 0.5rem 0; height: 45px; }
+    .wave-bar { width: 5px; height: 20px; background: #ff6b00; border-radius: 10px; }
+    .wave-bar.active { animation: soundWave 0.4s infinite alternate; }
+    @keyframes soundWave { 0% { height: 15px; } 100% { height: 40px; } }
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #fff3e6; padding: 0.3rem 1rem;
+      border-radius: 50px; font-size: 0.75rem; color: #ff6b00; font-weight: 600;
+    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ffb366; }
+    .status-dot.active { background: #22c55e; animation: blink 1s infinite; }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .lang-selector { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin: 0.8rem 0; }
+    .lang-btn {
+      padding: 0.3rem 0.7rem; border: 2px solid #ff6b00; background: white;
+      border-radius: 40px; cursor: pointer; font-weight: 600; font-size: 0.65rem;
+      color: #ff6b00; transition: 0.2s;
+    }
+    .lang-btn.active { background: #ff6b00; color: white; border-color: #ff6b00; }
+    .transcript-box {
+      background: #fff9f0; border-radius: 1rem; padding: 0.8rem;
+      margin: 0.8rem 0; border-left: 4px solid #ff6b00; text-align: left;
+    }
+    .transcript-box.listening-active { border-left-color: #22c55e; background: #f0fff4; }
+    .transcript-label { color: #ff6b00; font-size: 0.65rem; font-weight: 600; margin-bottom: 0.3rem; }
+    #transcriptText { font-size: 0.85rem; font-weight: 500; color: #333; word-break: break-word; }
+    .result-box {
+      background: #fff9f0; border-radius: 1rem; padding: 0.8rem; margin-top: 0.8rem;
+      border: 1px solid #ffe0c2; text-align: left;
+    }
+    .result-box h3 { color: #ff6b00; margin-bottom: 0.3rem; font-size: 0.85rem; }
+    .matched-item { background: white; padding: 0.6rem; border-radius: 0.8rem; margin-top: 0.4rem; border: 1px solid #ffe0c2; }
+    .matched-item h4 { color: #ff6b00; margin-bottom: 0.2rem; font-size: 0.9rem; }
+    .matched-item .item-price { color: #22c55e; font-weight: bold; font-size: 0.8rem; }
+    .add-confirm {
+      background: #ff6b00; border: none; padding: 0.35rem 0.7rem;
+      border-radius: 40px; color: white; font-weight: 600; font-size: 0.7rem;
+      cursor: pointer; margin-top: 0.4rem; width: 100%;
+    }
+    .add-confirm:hover { background: #e05a00; }
+    .items-grid { margin-top: 1.2rem; max-height: 400px; overflow-y: auto; }
+    .items-title { color: #ff6b00; font-size: 0.65rem; margin-bottom: 0.6rem; text-align: left; font-weight: 600; }
+    .cmd-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.5rem; }
+    .cmd-chip {
+      background: white; padding: 0.4rem 0.5rem; border-radius: 50px;
+      font-size: 0.65rem; text-align: center; cursor: pointer; color: #ff6b00;
+      transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px;
+      border: 1.5px solid #ff6b00; font-weight: 500;
+    }
+    .cmd-chip:hover { background: #ff6b00; color: white; transform: translateY(-2px); }
+    .cart-summary {
+      margin-top: 1rem; padding: 0.7rem; background: #fff3e6;
+      border-radius: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;
+    }
+    .cart-summary span { color: #ff6b00; font-size: 0.75rem; font-weight: 600; }
+    .view-cart-btn, .clear-cart {
+      background: #ff6b00; border: none; padding: 0.3rem 0.7rem;
+      border-radius: 40px; color: white; font-size: 0.65rem; cursor: pointer;
+    }
+    .view-cart-btn { background: #22c55e; margin-right: 5px; }
+    .view-cart-btn:hover { background: #16a34a; }
+    .clear-cart:hover { background: #e05a00; }
+    .toast-msg {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+      background: #333; color: white; padding: 0.5rem 1rem;
+      border-radius: 60px; transition: 0.3s; opacity: 0; font-size: 0.75rem; z-index: 1000;
+    }
+    .toast-msg.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .permission-warning {
+      background: #fff0e6; border: 1px solid #ff6b00;
+      border-radius: 0.8rem; padding: 0.5rem; margin-top: 0.8rem; font-size: 0.65rem;
+      color: #ff6b00; display: none;
+    }
+    .footer { text-align: center; margin-top: 1rem; padding-top: 0.8rem; border-top: 1px solid #ffe0c2; font-size: 0.6rem; color: #999; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: white; color: #ff6b00; font-weight: 600;
+      text-decoration: none; padding: 8px 18px; border-radius: 50px;
+      margin-bottom: 15px; font-size: 0.8rem; border: 2px solid #ff6b00;
+    }
+    .back-link:hover { background: #ff6b00; color: white; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <a href="index.html" class="back-link" id="backLink"><i class="fa-solid fa-arrow-left"></i> <span id="backText">Back to Menu</span></a>
+  
+  <div class="voice-card">
+    <div class="logo">
+      <h1><i class="fa-solid fa-microphone-lines"></i> EchoBite Voice</h1>
+      <p id="tagline">Voice Order • Multi-Language</p>
+    </div>
+
+    <div class="mic-container">
+      <div class="mic-button" id="micMainBtn">
+        <i class="fa-solid fa-microphone"></i>
+      </div>
+    </div>
+
+    <div class="wave-container" id="waveContainer">
+      <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+      <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+    </div>
+
+    <div class="status-area">
+      <span class="status-badge" id="statusBadge">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Click Mic to Start</span>
+      </span>
+    </div>
+
+    <div class="lang-selector">
+      <button class="lang-btn" data-lang="en-US">🇺🇸 English</button>
+      <button class="lang-btn active" data-lang="ur-PK">🇵🇰 اردو</button>
+      <button class="lang-btn" data-lang="tr-TR">🇹🇷 Türkçe</button>
+      <button class="lang-btn" data-lang="zh-CN">🇨🇳 中文</button>
+      <button class="lang-btn" data-lang="fa-IR">🇮🇷 فارسی</button>
+      <button class="lang-btn" data-lang="fr-FR">🇫🇷 Français</button>
+    </div>
+
+    <div class="transcript-box" id="transcriptBox">
+      <div class="transcript-label" id="transcriptLabel"><i class="fa-regular fa-message"></i> You said:</div>
+      <div id="transcriptText">Click microphone and speak</div>
+    </div>
+
+    <div class="result-box" id="resultBox">
+      <h3 id="resultTitle"><i class="fa-solid fa-utensils"></i> Order Result</h3>
+      <div id="resultContent">
+        <div class="response-text" id="resultMessage">🎤 Speak your desired items</div>
+      </div>
+    </div>
+
+    <div class="items-grid">
+      <div class="items-title" id="itemsTitle"><i class="fa-regular fa-hand-point-right"></i> Click or Speak:</div>
+      <div class="cmd-grid" id="itemsGrid"></div>
+    </div>
+
+    <div class="cart-summary" id="cartSummary">
+      <span><i class="fa-solid fa-cart-shopping"></i> <span id="cartCount">0</span> <span id="cartItemsText">items</span></span>
+      <span><span id="totalLabel">Total</span>: Rs <span id="cartTotal">0</span></span>
+      <div>
+        <button class="view-cart-btn" id="viewCartBtn"><i class="fa-solid fa-eye"></i> <span id="viewCartText">View Cart</span></button>
+        <button class="clear-cart" id="clearCartBtn"><i class="fa-regular fa-trash-can"></i> <span id="clearText">Clear</span></button>
+      </div>
+    </div>
+
+    <div class="permission-warning" id="permissionWarning">
+      <i class="fa-solid fa-microphone-slash"></i> <span id="permWarning">Microphone access needed</span>
+    </div>
+
+    <div class="footer">
+      <i class="fa-solid fa-microphone"></i> <span id="footerText">Click mic, allow access, and speak clearly</span>
+    </div>
+  </div>
+</div>
+
+<div class="toast-msg" id="toastMsg">🎤 Listening...</div>
+
+<script>
+  // ========== COMPLETE MENU (ALL 20 ITEMS) ==========
+  const menuItems = [
+    { id: 1, name: "Chicken Pizza", price: 699, category: "Pizza", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800" },
+    { id: 2, name: "Pepperoni Pizza", price: 749, category: "Pizza", image: "https://tse1.mm.bing.net/th/id/OIP.GpyurlCVLh1QGTSloYOvMAHaLH?r=0&w=682&h=1024&rs=1&pid=ImgDetMain&o=7&rm=3" },
+    { id: 3, name: "Cheese Pizza", price: 649, category: "Pizza", image: "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=800" },
+    { id: 4, name: "BBQ Pizza", price: 799, category: "Pizza", image: "https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=800" },
+    { id: 5, name: "Zinger Burger", price: 399, category: "Burger", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800" },
+    { id: 6, name: "Beef Burger", price: 449, category: "Burger", image: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=800" },
+    { id: 7, name: "Chicken Burger", price: 399, category: "Burger", image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=800" },
+    { id: 8, name: "Cheese Burger", price: 499, category: "Burger", image: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800" },
+    { id: 9, name: "French Fries", price: 199, category: "Fast Food", image: "https://images.unsplash.com/photo-1576107232684-1279f390859f?w=800" },
+    { id: 10, name: "Loaded Fries", price: 249, category: "Fast Food", image: "https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=800" },
+    { id: 11, name: "Nuggets", price: 299, category: "Fast Food", image: "https://images.unsplash.com/photo-1562967916-eb82221dfb92?w=800" },
+    { id: 12, name: "Fried Chicken", price: 499, category: "Fast Food", image: "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=800" },
+    { id: 13, name: "Cold Coffee", price: 120, category: "Drinks", image: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=800" },
+    { id: 14, name: "Oreo Shake", price: 150, category: "Drinks", image: "https://images.unsplash.com/photo-1577805947697-89e18249d767?w=800" },
+    { id: 15, name: "Mint Margarita", price: 100, category: "Drinks", image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=800" },
+    { id: 16, name: "Fresh Lime", price: 90, category: "Drinks", image: "https://tse1.mm.bing.net/th/id/OIP.ssf5dwm9l2vXybaUuG_XYgHaGZ?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" },
+    { id: 17, name: "Chocolate Cake", price: 299, category: "Dessert", image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800" },
+    { id: 18, name: "Brownie", price: 199, category: "Dessert", image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=800" },
+    { id: 19, name: "Ice Cream", price: 149, category: "Dessert", image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=800" },
+    { id: 20, name: "Donuts", price: 199, category: "Dessert", image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800" }
+  ];
+
+  // ========== MULTI-LANGUAGE TRANSLATIONS ==========
+  const translations = {
+    'en-US': {
+      backText: 'Back to Menu', tagline: 'Voice Order • Multi-Language', statusReady: 'Ready',
+      statusListening: 'Listening...', statusStart: 'Click Mic to Start', transcriptLabel: 'You said:',
+      resultTitle: 'Order Result', resultMessage: '🎤 Speak your desired items', itemsTitle: 'Click or Speak:',
+      cartItems: 'items', totalLabel: 'Total', viewCart: 'View Cart', clearText: 'Clear',
+      permWarning: 'Microphone access needed', footerText: 'Click mic, allow access, and speak clearly',
+      addedMsg: 'added to cart!', itemFound: 'Item found', price: 'Price', addToCart: 'Add to Cart',
+      noItemFound: 'No item found for', tryAgain: 'Please try again', cartEmpty: 'Cart is empty',
+      itemNames: { "Chicken Pizza": "Chicken Pizza", "Pepperoni Pizza": "Pepperoni Pizza", "Cheese Pizza": "Cheese Pizza", "BBQ Pizza": "BBQ Pizza",
+        "Zinger Burger": "Zinger Burger", "Beef Burger": "Beef Burger", "Chicken Burger": "Chicken Burger", "Cheese Burger": "Cheese Burger",
+        "French Fries": "French Fries", "Loaded Fries": "Loaded Fries", "Nuggets": "Nuggets", "Fried Chicken": "Fried Chicken",
+        "Cold Coffee": "Cold Coffee", "Oreo Shake": "Oreo Shake", "Mint Margarita": "Mint Margarita", "Fresh Lime": "Fresh Lime",
+        "Chocolate Cake": "Chocolate Cake", "Brownie": "Brownie", "Ice Cream": "Ice Cream", "Donuts": "Donuts" }
+    },
+    'ur-PK': {
+      backText: 'مینو پر واپس جائیں', tagline: 'آواز آرڈر • کئی زبانیں', statusReady: 'تیار',
+      statusListening: 'سن رہا ہوں...', statusStart: 'مائیک پر کلک کریں', transcriptLabel: 'آپ نے کہا:',
+      resultTitle: 'آرڈر کی تفصیل', resultMessage: '🎤 اپنی پسند کی اشیاء بولیں', itemsTitle: 'کلک کریں یا بولیں:',
+      cartItems: 'اشیاء', totalLabel: 'کل', viewCart: 'کارٹ دیکھیں', clearText: 'صاف کریں',
+      permWarning: 'مائیکروفون کی اجازت درکار ہے', footerText: 'مائیک پر کلک کریں، اجازت دیں، اور واضح بولیں',
+      addedMsg: 'کارٹ میں شامل کر دیا گیا', itemFound: 'آئٹم مل گیا', price: 'قیمت', addToCart: 'کارٹ میں شامل کریں',
+      noItemFound: 'کوئی آئٹم نہیں ملی', tryAgain: 'براہ کرم دوبارہ کہیں', cartEmpty: 'کارٹ خالی ہے',
+      itemNames: { "Chicken Pizza": "چکن پیزا", "Pepperoni Pizza": "پپرونی پیزا", "Cheese Pizza": "چیز پیزا", "BBQ Pizza": "بی بی کیو پیزا",
+        "Zinger Burger": "زنگر برگر", "Beef Burger": "بیف برگر", "Chicken Burger": "چکن برگر", "Cheese Burger": "چیز برگر",
+        "French Fries": "فرنچ فرائز", "Loaded Fries": "لوڈڈ فرائز", "Nuggets": "نگٹس", "Fried Chicken": "فرائیڈ چکن",
+        "Cold Coffee": "کولڈ کافی", "Oreo Shake": "اوريو شیک", "Mint Margarita": "منٹ مارگریٹا", "Fresh Lime": "تازہ لیموں",
+        "Chocolate Cake": "چاکلیٹ کیک", "Brownie": "براؤنی", "Ice Cream": "آئس کریم", "Donuts": "ڈونٹس" }
+    },
+    'tr-TR': {
+      backText: 'Menüye Dön', tagline: 'Sesli Sipariş • Çoklu Dil', statusReady: 'Hazır',
+      statusListening: 'Dinleniyor...', statusStart: 'Mikrofonu Tıklayın', transcriptLabel: 'Dediniz:',
+      resultTitle: 'Sipariş Sonucu', resultMessage: '🎤 İstediğiniz ürünleri söyleyin', itemsTitle: 'Tıklayın veya Söyleyin:',
+      cartItems: 'ürün', totalLabel: 'Toplam', viewCart: 'Sepeti Gör', clearText: 'Temizle',
+      permWarning: 'Mikrofon erişimi gerekli', footerText: 'Mikrofonu tıklayın, izin verin ve net konuşun',
+      addedMsg: 'sepete eklendi!', itemFound: 'Ürün bulundu', price: 'Fiyat', addToCart: 'Sepete Ekle',
+      noItemFound: 'Ürün bulunamadı', tryAgain: 'Lütfen tekrar deneyin', cartEmpty: 'Sepet boş',
+      itemNames: { "Chicken Pizza": "Tavuklu Pizza", "Pepperoni Pizza": "Pepperoni Pizza", "Cheese Pizza": "Peynirli Pizza", "BBQ Pizza": "Barbekü Pizza",
+        "Zinger Burger": "Zinger Burger", "Beef Burger": "Dana Burger", "Chicken Burger": "Tavuk Burger", "Cheese Burger": "Peynirli Burger",
+        "French Fries": "Patates Kızartması", "Loaded Fries": "Soslu Patates", "Nuggets": "Tavuk Nugget", "Fried Chicken": "Kızarmış Tavuk",
+        "Cold Coffee": "Soğuk Kahve", "Oreo Shake": "Oreo Sallama", "Mint Margarita": "Nane Margarita", "Fresh Lime": "Taze Limon",
+        "Chocolate Cake": "Çikolatalı Kek", "Brownie": "Browni", "Ice Cream": "Dondurma", "Donuts": "Donut" }
+    },
+    'zh-CN': {
+      backText: '返回菜单', tagline: '语音点餐 • 多语言', statusReady: '准备就绪',
+      statusListening: '正在听...', statusStart: '点击麦克风', transcriptLabel: '您说了:',
+      resultTitle: '订单结果', resultMessage: '🎤 说出您想要的商品', itemsTitle: '点击或说出:',
+      cartItems: '件商品', totalLabel: '总计', viewCart: '查看购物车', clearText: '清空',
+      permWarning: '需要麦克风权限', footerText: '点击麦克风，允许权限，清晰说话',
+      addedMsg: '已添加到购物车！', itemFound: '找到商品', price: '价格', addToCart: '添加到购物车',
+      noItemFound: '未找到商品', tryAgain: '请重试', cartEmpty: '购物车为空',
+      itemNames: { "Chicken Pizza": "鸡肉披萨", "Pepperoni Pizza": "辣香肠披萨", "Cheese Pizza": "奶酪披萨", "BBQ Pizza": "烧烤披萨",
+        "Zinger Burger": "辛格汉堡", "Beef Burger": "牛肉汉堡", "Chicken Burger": "鸡肉汉堡", "Cheese Burger": "奶酪汉堡",
+        "French Fries": "炸薯条", "Loaded Fries": "豪华薯条", "Nuggets": "鸡块", "Fried Chicken": "炸鸡",
+        "Cold Coffee": "冰咖啡", "Oreo Shake": "奥利奥奶昔", "Mint Margarita": "薄荷玛格丽塔", "Fresh Lime": "鲜柠檬汁",
+        "Chocolate Cake": "巧克力蛋糕", "Brownie": "布朗尼", "Ice Cream": "冰淇淋", "Donuts": "甜甜圈" }
+    },
+    'fa-IR': {
+      backText: 'بازگشت به منو', tagline: 'سفارش صوتی • چند زبانه', statusReady: 'آماده',
+      statusListening: 'گوش می‌کنم...', statusStart: 'روی میکروفون کلیک کنید', transcriptLabel: 'شما گفتید:',
+      resultTitle: 'نتیجه سفارش', resultMessage: '🎤 موارد مورد نظر خود را بگویید', itemsTitle: 'کلیک کنید یا بگویید:',
+      cartItems: 'مورد', totalLabel: 'مجموع', viewCart: 'مشاهده سبد', clearText: 'پاک کردن',
+      permWarning: 'دسترسی به میکروفون لازم است', footerText: 'روی میکروفون کلیک کنید، اجازه دهید و واضح صحبت کنید',
+      addedMsg: 'به سبد خرید اضافه شد!', itemFound: 'مورد پیدا شد', price: 'قیمت', addToCart: 'افزودن به سبد',
+      noItemFound: 'موردی یافت نشد', tryAgain: 'لطفا دوباره امتحان کنید', cartEmpty: 'سبد خرید خالی است',
+      itemNames: { "Chicken Pizza": "پیتزا مرغ", "Pepperoni Pizza": "پیتزا پپرونی", "Cheese Pizza": "پیتزا پنیر", "BBQ Pizza": "پیتزا باربیکیو",
+        "Zinger Burger": "برگر زینگر", "Beef Burger": "برگر گوشت", "Chicken Burger": "برگر مرغ", "Cheese Burger": "برگر پنیر",
+        "French Fries": "سیب زمینی سرخ کرده", "Loaded Fries": "سیب زمینی ویژه", "Nuggets": "ناگت مرغ", "Fried Chicken": "مرغ سوخاری",
+        "Cold Coffee": "قهوه سرد", "Oreo Shake": "شیک اوریو", "Mint Margarita": "مارگاریتا نعناع", "Fresh Lime": "لیمو تازه",
+        "Chocolate Cake": "کیک شکلاتی", "Brownie": "براونی", "Ice Cream": "بستنی", "Donuts": "دونات" }
+    },
+    'fr-FR': {
+      backText: 'Retour au Menu', tagline: 'Commande Vocale • Multilingue', statusReady: 'Prêt',
+      statusListening: 'Écoute...', statusStart: 'Cliquez sur le micro', transcriptLabel: 'Vous avez dit:',
+      resultTitle: 'Résultat de commande', resultMessage: '🎤 Dites les articles que vous souhaitez', itemsTitle: 'Cliquez ou dites:',
+      cartItems: 'articles', totalLabel: 'Total', viewCart: 'Voir Panier', clearText: 'Effacer',
+      permWarning: 'Accès microphone requis', footerText: 'Cliquez sur le micro, autorisez et parlez clairement',
+      addedMsg: 'ajouté au panier!', itemFound: 'Article trouvé', price: 'Prix', addToCart: 'Ajouter au panier',
+      noItemFound: 'Aucun article trouvé', tryAgain: 'Veuillez réessayer', cartEmpty: 'Le panier est vide',
+      itemNames: { "Chicken Pizza": "Pizza Poulet", "Pepperoni Pizza": "Pizza Pepperoni", "Cheese Pizza": "Pizza Fromage", "BBQ Pizza": "Pizza BBQ",
+        "Zinger Burger": "Burger Zinger", "Beef Burger": "Burger Bœuf", "Chicken Burger": "Burger Poulet", "Cheese Burger": "Cheeseburger",
+        "French Fries": "Frites", "Loaded Fries": "Frites Garnies", "Nuggets": "Nuggets", "Fried Chicken": "Poulet Frit",
+        "Cold Coffee": "Café Froid", "Oreo Shake": "Milkshake Oreo", "Mint Margarita": "Margarita Menthe", "Fresh Lime": "Citron Frais",
+        "Chocolate Cake": "Gâteau Chocolat", "Brownie": "Brownie", "Ice Cream": "Glace", "Donuts": "Beignets" }
+    }
+  };
+
+  let currentLang = 'ur-PK';
+  let cart = JSON.parse(localStorage.getItem('echo_cart')) || [];
+  let recognition = null;
+  let isListening = false;
+  let speechSynthesis = window.speechSynthesis;
+
+  const languageKeywords = {
+    'en-US': { 'chicken pizza': 'Chicken Pizza', 'zinger': 'Zinger Burger', 'fries': 'French Fries', 'nuggets': 'Nuggets' },
+    'ur-PK': { 'چکن پیزا': 'Chicken Pizza', 'زنگر': 'Zinger Burger', 'فرنچ فرائز': 'French Fries', 'نگٹس': 'Nuggets' },
+    'tr-TR': { 'tavuklu pizza': 'Chicken Pizza', 'zinger': 'Zinger Burger', 'patates': 'French Fries', 'nugget': 'Nuggets' },
+    'zh-CN': { '鸡肉披萨': 'Chicken Pizza', '辛格汉堡': 'Zinger Burger', '炸薯条': 'French Fries', '鸡块': 'Nuggets' },
+    'fa-IR': { 'پیتزا مرغ': 'Chicken Pizza', 'زینگر': 'Zinger Burger', 'سیب زمینی': 'French Fries', 'ناگت': 'Nuggets' },
+    'fr-FR': { 'poulet': 'Chicken Pizza', 'zinger': 'Zinger Burger', 'frites': 'French Fries', 'nuggets': 'Nuggets' }
+  };
+
+  function speakText(text) {
+    if (!speechSynthesis) return;
+    speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    if (currentLang === 'ur-PK') utterance.lang = 'ur-PK';
+    else if (currentLang === 'tr-TR') utterance.lang = 'tr-TR';
+    else if (currentLang === 'zh-CN') utterance.lang = 'zh-CN';
+    else if (currentLang === 'fa-IR') utterance.lang = 'fa-IR';
+    else if (currentLang === 'fr-FR') utterance.lang = 'fr-FR';
+    else utterance.lang = 'en-US';
+    utterance.rate = 0.9;
+    speechSynthesis.speak(utterance);
+  }
+
+  function applyTranslation() {
+    const t = translations[currentLang];
+    if (!t) return;
+    document.getElementById('backText').innerText = t.backText;
+    document.getElementById('tagline').innerText = t.tagline;
+    if (!isListening) document.getElementById('statusText').innerText = t.statusReady;
+    document.getElementById('transcriptLabel').innerHTML = `<i class="fa-regular fa-message"></i> ${t.transcriptLabel}`;
+    document.getElementById('resultTitle').innerHTML = `<i class="fa-solid fa-utensils"></i> ${t.resultTitle}`;
+    document.getElementById('itemsTitle').innerHTML = `<i class="fa-regular fa-hand-point-right"></i> ${t.itemsTitle}`;
+    document.getElementById('cartItemsText').innerText = t.cartItems;
+    document.getElementById('totalLabel').innerText = t.totalLabel;
+    document.getElementById('viewCartText').innerText = t.viewCart;
+    document.getElementById('clearText').innerText = t.clearText;
+    document.getElementById('permWarning').innerHTML = `<i class="fa-solid fa-microphone-slash"></i> ${t.permWarning}`;
+    document.getElementById('footerText').innerText = t.footerText;
+  }
+
+  function updateCartDisplay() {
+    const totalItems = cart.reduce((sum, i) => sum + i.quantity, 0);
+    const totalPrice = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+    document.getElementById('cartCount').innerText = totalItems;
+    document.getElementById('cartTotal').innerText = totalPrice;
+    localStorage.setItem('echo_cart', JSON.stringify(cart));
+  }
+
+  function addToCart(item) {
+    const existing = cart.find(i => i.name === item.name);
+    if (existing) existing.quantity++;
+    else cart.push({ ...item, quantity: 1, size: 'Regular' });
+    updateCartDisplay();
+    const t = translations[currentLang];
+    showToast(`${item.name} ${t.addedMsg}`);
+    speakText(`${item.name} ${t.addedMsg}`);
+  }
+
+  function clearCart() { cart = []; updateCartDisplay(); const t = translations[currentLang]; showToast(t.cartEmpty); speakText(t.cartEmpty); }
+  
+  function viewCart() { 
+    if (cart.length === 0) { 
+      const t = translations[currentLang]; 
+      showToast(t.cartEmpty); 
+      speakText(t.cartEmpty); 
+      return; 
+    } 
+    localStorage.setItem('echo_cart', JSON.stringify(cart)); 
+    window.location.href = 'cart.html'; 
+  }
+
+  function initSpeechRecognition() {
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognitionAPI) { showToast('❌ Voice not supported. Please use Google Chrome.', 4000); return false; }
+    recognition = new SpeechRecognitionAPI();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.onstart = () => { isListening = true; document.getElementById('micMainBtn').classList.add('listening'); const t = translations[currentLang]; document.getElementById('statusText').innerText = t.statusListening; document.getElementById('statusDot').classList.add('active'); document.getElementById('transcriptBox').classList.add('listening-active'); startWaveAnimation(); };
+    recognition.onend = () => { isListening = false; document.getElementById('micMainBtn').classList.remove('listening'); const t = translations[currentLang]; document.getElementById('statusText').innerText = t.statusReady; document.getElementById('statusDot').classList.remove('active'); document.getElementById('transcriptBox').classList.remove('listening-active'); stopWaveAnimation(); };
+    recognition.onresult = (event) => { const spokenText = event.results[0][0].transcript; document.getElementById('transcriptText').innerHTML = `<strong>"${spokenText}"</strong>`; findMatchingItem(spokenText.toLowerCase()); };
+    recognition.onerror = (event) => { if (event.error === 'not-allowed') document.getElementById('permissionWarning').style.display = 'block'; isListening = false; document.getElementById('micMainBtn').classList.remove('listening'); stopWaveAnimation(); };
+    return true;
+  }
+
+  function findMatchingItem(spokenText) {
+    let matchedItem = null;
+    const keywords = languageKeywords[currentLang] || languageKeywords['en-US'];
+    for (const [keyword, itemName] of Object.entries(keywords)) { if (spokenText.includes(keyword)) { matchedItem = menuItems.find(i => i.name === itemName); if (matchedItem) break; } }
+    if (!matchedItem) matchedItem = menuItems.find(i => spokenText.includes(i.name.toLowerCase()));
+    const t = translations[currentLang];
+    if (matchedItem) {
+      document.getElementById('resultContent').innerHTML = `<div class="matched-item"><h4><i class="fa-solid fa-utensils"></i> ${matchedItem.name}</h4><div class="item-price">💰 ${t.price}: Rs ${matchedItem.price}</div><div>📂 ${matchedItem.category}</div><button class="add-confirm" onclick="addToCartAndConfirm(${matchedItem.id})"><i class="fa-solid fa-cart-plus"></i> ${t.addToCart}</button></div>`;
+      speakText(`${t.itemFound}: ${matchedItem.name}. ${t.price} ${matchedItem.price} rupees.`);
+    } else {
+      document.getElementById('resultContent').innerHTML = `<div class="response-text">❌ ${t.noItemFound} "${spokenText}"<br>${t.tryAgain}</div>`;
+      speakText(`${t.noItemFound} ${spokenText}. ${t.tryAgain}`);
+    }
+  }
+
+  function addToCartAndConfirm(itemId) { const item = menuItems.find(i => i.id === itemId); if (item) addToCart(item); }
+  function startListening() { if (!recognition && !initSpeechRecognition()) return; recognition.lang = currentLang === 'en-US' ? 'en-US' : currentLang === 'tr-TR' ? 'tr-TR' : currentLang === 'zh-CN' ? 'zh-CN' : currentLang === 'fa-IR' ? 'fa-IR' : currentLang === 'fr-FR' ? 'fr-FR' : 'ur-PK'; recognition.start(); }
+
+  let waveInterval = null;
+  function startWaveAnimation() { if (waveInterval) clearInterval(waveInterval); const bars = document.querySelectorAll('.wave-bar'); bars.forEach(bar => bar.classList.add('active')); waveInterval = setInterval(() => { if (isListening) { bars.forEach(bar => bar.style.height = Math.floor(Math.random() * 35) + 15 + 'px'); } }, 100); }
+  function stopWaveAnimation() { if (waveInterval) clearInterval(waveInterval); document.querySelectorAll('.wave-bar').forEach(bar => { bar.classList.remove('active'); bar.style.height = '20px'; }); }
+  function showToast(msg, duration = 2000) { const toast = document.getElementById('toastMsg'); toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), duration); }
+
+  function renderMenuButtons() {
+    const container = document.getElementById('itemsGrid'); container.innerHTML = ''; const t = translations[currentLang];
+    menuItems.forEach(item => { const btn = document.createElement('div'); btn.className = 'cmd-chip'; const translatedName = t.itemNames[item.name] || item.name; btn.innerHTML = `<i class="fa-solid fa-${item.category === 'Pizza' ? 'pizza-slice' : item.category === 'Burger' ? 'burger' : item.category === 'Fast Food' ? 'french-fries' : item.category === 'Drinks' ? 'mug-hot' : 'cake'}"></i> ${translatedName}`; btn.onclick = () => { addToCart(item); document.getElementById('transcriptText').innerHTML = `<strong>"${translatedName}"</strong> (clicked)`; document.getElementById('resultContent').innerHTML = `<div class="response-text">✅ <strong>${translatedName}</strong> ${t.addedMsg}</div>`; }; container.appendChild(btn); });
+  }
+
+  function changeLanguage(lang) { currentLang = lang; applyTranslation(); renderMenuButtons(); if (recognition) recognition.lang = lang === 'en-US' ? 'en-US' : lang; const langDisplay = lang === 'en-US' ? 'English' : lang === 'ur-PK' ? 'Urdu' : lang === 'tr-TR' ? 'Turkish' : lang === 'zh-CN' ? 'Chinese' : lang === 'fa-IR' ? 'Persian' : 'French'; speakText(`${langDisplay} language selected`); }
+
+  document.getElementById('micMainBtn').addEventListener('click', () => startListening());
+  document.getElementById('clearCartBtn').addEventListener('click', () => clearCart());
+  document.getElementById('viewCartBtn').addEventListener('click', () => viewCart());
+  document.querySelectorAll('.lang-btn').forEach(btn => { btn.addEventListener('click', function() { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); changeLanguage(this.dataset.lang); }); });
+
+  renderMenuButtons();
+  initSpeechRecognition();
+  updateCartDisplay();
+  applyTranslation();
+  setTimeout(() => speakText(translations[currentLang].statusStart), 500);
+</script>
+</body>
+</html>

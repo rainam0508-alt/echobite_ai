@@ -15,18 +15,20 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: #fef6ef;
+      background: linear-gradient(135deg, #ff6b00, #ff8c33, #ffaa66);
+      min-height: 100vh;
       color: #2c241e;
     }
 
     header {
-      background: #fffaf5;
+      background: rgba(255, 255, 255, 0.95);
       padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #f0e2d4;
+      border-bottom: 1px solid #ffe0c2;
       flex-wrap: wrap;
+      backdrop-filter: blur(5px);
     }
 
     .logo h1 {
@@ -43,6 +45,36 @@
       font-weight: 600;
     }
 
+    /* Voice Back Button Styles */
+    .voice-back-btn {
+      background: #ff6b00;
+      border: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 50px;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      margin-right: 15px;
+    }
+
+    .voice-back-btn:hover {
+      background: #e05a00;
+      transform: scale(1.02);
+    }
+
+    .header-buttons {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
     .cart-main {
       max-width: 1000px;
       margin: 2rem auto;
@@ -53,7 +85,7 @@
       background: white;
       border-radius: 1.8rem;
       padding: 1.8rem;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
     }
 
     .cart-card h2 {
@@ -62,6 +94,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      color: #ff6b00;
     }
 
     .cart-list {
@@ -93,6 +126,7 @@
 
     .item-details h4 {
       font-weight: 800;
+      color: #ff6b00;
     }
 
     .item-size {
@@ -151,6 +185,7 @@
       justify-content: space-between;
       font-weight: 700;
       font-size: 1.2rem;
+      color: #ff6b00;
     }
 
     .proceed-btn {
@@ -204,6 +239,9 @@
         gap: 12px;
         text-align: center;
       }
+      .header-buttons {
+        justify-content: center;
+      }
     }
   </style>
 </head>
@@ -213,8 +251,14 @@
   <div class="logo">
     <h1>ECHO BITE AI <span>Cart</span></h1>
   </div>
-  <div class="back-home">
-    <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Menu</a>
+  <div class="header-buttons">
+    <!-- Back to Voice Order Button -->
+    <button class="voice-back-btn" onclick="window.location.href='voice-order.html'">
+      <i class="fas fa-microphone-alt"></i> Back to Voice Order
+    </button>
+    <div class="back-home">
+      <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Menu</a>
+    </div>
   </div>
 </header>
 
