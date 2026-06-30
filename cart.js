@@ -178,12 +178,103 @@ const EchoCart = (() => {
     }
   }
 
+  async function clearCart() {
+    const user = getLoggedInUser();
+    saveLocalCart([]);
+
+    if (!user) return { success: true };
+
+    try {
+      const response = await fetch(`${CART_API}/${user.id}`);
+      const data = await response.json();
+
+      if (response.ok && data.success && data.cart?.items?.length) {
+        await Promise.all(
+          data.cart.items.map((item) =>
+            fetch(`${CART_API}/update`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                userId: user.id,
+                productId: item.productId,
+                selectedSize: item.selectedSize || 'Regular',
+                quantity: 0
+              })
+            })
+          )
+        );
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error clearing cart:', error);
+      return { success: false };
+    }
+  }
+
+  async function placeOrder() {
+    const user = getLoggedInUser();
+    const cart = getLocalCart();
+
+    if (!user) {
+      if (confirm('Please login to place an order. Go to login page?')) {
+        window.location.href = 'login.html';
+      }
+      return { success: false };
+    }
+
+    if (!cart.length) {
+      alert('Cart is empty. Add items first.');
+      return { success: false };
+    }
+
+    const items = cart.map((item) => ({
+      foodId: item.productId || item.id,
+      foodName: item.name,
+      quantity: item.quantity,
+      price: item.price
+    }));
+
+    if (items.some((item) => !item.foodId)) {
+      alert('Some cart items are invalid. Please re-add them from the menu.');
+      return { success: false };
+    }
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/orders/place`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          userName: user.name || user.email,
+          items
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        await clearCart();
+        return { success: true, order: data.order };
+      }
+
+      alert(data.message || 'Failed to place order');
+      return { success: false };
+    } catch (error) {
+      console.error('Error placing order:', error);
+      alert('Could not connect to order service. Please try again.');
+      return { success: false };
+    }
+  }
+
   return {
     BACKEND_URL,
     getLoggedInUser,
     fetchCart,
     addToCart,
     updateItemQuantity,
+    clearCart,
+    placeOrder,
     resolveFoodByName,
     buildImageUrl,
     getLocalCart,

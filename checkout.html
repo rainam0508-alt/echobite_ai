@@ -340,13 +340,19 @@
   async function placeOrder() {
     const cart = getCart();
     if (cart.length === 0) { alert('Cart is empty. Add items first.'); return; }
+
     const name = document.getElementById('fullName').value.trim();
     const email = document.getElementById('email').value.trim();
     const phone = document.getElementById('phone').value.trim();
     const address = document.getElementById('address').value.trim();
-    if (!name || !email || !phone || !address) { alert('Please fill all customer details.'); return; }
+
+    if (!name || !email || !phone || !address) {
+      alert('Please fill all customer details.');
+      return;
+    }
     if (!/^\d{11}$/.test(phone)) { alert('Phone must be exactly 11 digits.'); return; }
     if (!/^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email)) { alert('Invalid email address.'); return; }
+
     const deliveryRadio = document.querySelector('input[name="delivery"]:checked');
     const deliveryOption = deliveryRadio ? deliveryRadio.value : 'standard';
     const paymentRadio = document.querySelector('input[name="payment"]:checked');
@@ -355,33 +361,20 @@
     const platformFee = 9.99;
     const subtotal = cart.reduce((s, i) => s + (i.price * i.quantity), 0);
     const total = subtotal + deliveryFee + platformFee;
-    const orderData = {
-      customer: { name, email, phone },
-      items: cart,
-      subtotal, deliveryFee, platformFee, total,
-      deliveryOption: deliveryOption === 'standard' ? 'Standard (40-60 mins)' : 'Express (20-30 mins)',
-      paymentMethod: paymentMethod === 'cash' ? 'Cash on Delivery' : 'Card (Online)',
-      address
-    };
-    try {
-      const response = await fetch('https://echobite-ai-backend.onrender.com/api/place-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData)
-      });
-      const result = await response.json();
-      if (result.success) {
-        alert(`🎉 Order placed!\nOrder ID: ${result.orderId}\nTotal: Rs ${total.toFixed(2)}\nThank you!`);
-        localStorage.removeItem('echo_cart');
-        window.location.href = 'index.html';
-      } else {
-        alert('Error: ' + result.message);
-      }
-    } catch (err) {
-      alert('Backend not running. Please start server.js on port 3000.\n\nDemo mode: Order saved locally and cart cleared.');
-      console.warn(err);
-      // For demo, still clear cart and go home
-      localStorage.removeItem('echo_cart');
+
+    const result = await EchoCart.placeOrder();
+
+    if (result.success) {
+      const orderId = result.order?._id || 'N/A';
+      alert(
+        `🎉 Order placed!\nOrder ID: ${orderId}\n` +
+        `Items total: Rs ${subtotal.toFixed(2)}\n` +
+        `Delivery: Rs ${deliveryFee.toFixed(2)}\n` +
+        `Platform fee: Rs ${platformFee.toFixed(2)}\n` +
+        `Grand total: Rs ${total.toFixed(2)}\n` +
+        `Payment: ${paymentMethod === 'cash' ? 'Cash on Delivery' : 'Card (Online)'}\n` +
+        `Address: ${address}\nThank you!`
+      );
       window.location.href = 'index.html';
     }
   }

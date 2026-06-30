@@ -1,32 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders Management - EchoBite Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background-color: #1a1a1d; color: #e0e0e0; font-family: sans-serif; padding: 20px; }
-        .admin-container { max-width: 1000px; margin: 40px auto; }
-        h2 { color: #ffffff; border-left: 5px solid #4caf50; padding-left: 15px; }
-        .order-table { width: 100%; border-collapse: separate; border-spacing: 0; background: #252528; border-radius: 12px; overflow: hidden; }
-        .order-table th { background-color: #1e392a; color: #4caf50; padding: 18px; text-align: left; }
-        .order-table td { padding: 18px; border-bottom: 1px solid #333338; }
-        .order-table tr:hover { background-color: #1a2a22; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: #12141c; color: #f3f4f6; display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background-color: #1a1d29; padding: 25px 15px; display: flex; flex-direction: column; border-right: 1px solid #2a2f45; }
+        .sidebar h2 { color: #ff4757; font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 35px; letter-spacing: 1px; text-transform: uppercase; }
+        .sidebar a { display: flex; align-items: center; color: #a0aec0; text-decoration: none; padding: 12px 20px; margin-bottom: 8px; border-radius: 10px; font-size: 15px; font-weight: 500; transition: all 0.3s ease; }
+        .sidebar a i { margin-right: 12px; font-size: 18px; }
+        .sidebar a:hover, .sidebar a.active { background: linear-gradient(135deg, #ff4757, #ff6b81); color: #fff; box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3); }
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
+        .main-content h1 { font-size: 28px; font-weight: 600; margin-bottom: 30px; color: #fff; border-bottom: 2px solid #2a2f45; padding-bottom: 10px; }
+        .table-container { background-color: #1a1d29; border-radius: 15px; padding: 20px; border: 1px solid #2a2f45; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background-color: #24283b; color: #ff6b81; padding: 15px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { padding: 15px; border-bottom: 1px solid #2a2f45; font-size: 14px; color: #e2e8f0; vertical-align: middle; }
+        tr:hover td { background-color: #202436; }
+        .status-select { background-color: #24283b; border: 1px solid #3b4261; color: #fff; padding: 8px 10px; border-radius: 8px; font-size: 13px; }
+        .badge { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; }
+        .badge-pending { background: rgba(255, 193, 7, 0.15); color: #ffc107; }
+        .badge-confirmed { background: rgba(33, 150, 243, 0.15); color: #64b5f6; }
+        .badge-preparing { background: rgba(156, 39, 176, 0.15); color: #ce93d8; }
+        .badge-delivery { background: rgba(255, 152, 0, 0.15); color: #ffb74d; }
+        .badge-delivered { background: rgba(76, 175, 80, 0.15); color: #81c784; }
+        .badge-cancelled { background: rgba(244, 67, 54, 0.15); color: #e57373; }
     </style>
 </head>
 <body>
-    <div class="admin-container">
-        <h2>Customer Orders</h2>
-        <table class="order-table">
-            <thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th></tr></thead>
-            <tbody id="order-body"><tr><td colspan="5" style="text-align:center;">Loading...</td></tr></tbody>
-        </table>
+    <div class="sidebar">
+        <h2>EchoBite Admin</h2>
+        <a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="users.html"><i class="fa-solid fa-users"></i> Users</a>
+        <a href="foods.html"><i class="fa-solid fa-utensils"></i> Foods</a>
+        <a href="orders.html" class="active"><i class="fa-solid fa-basket-shopping"></i> Orders</a>
+        <a href="reports.html"><i class="fa-solid fa-chart-line"></i> Reports</a>
     </div>
+
+    <div class="main-content">
+        <h1>Orders Management</h1>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Items</th>
+                        <th>Total (PKR)</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="order-body">
+                    <tr><td colspan="6" style="text-align:center;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <script>
-        async function loadOrders() {
-            const res = await fetch('https://YOUR_BACKEND_URL/api/orders');
-            const data = await res.json();
-            document.getElementById('order-body').innerHTML = data.map(o => `
-                <tr><td>#${o._id.slice(-6)}</td><td>${o.customerName}</td><td>${o.items.join(', ')}</td><td>PKR ${o.totalPrice}</td><td>${o.status}</td></tr>
+        const API_BASE = 'https://echobite-ai-backend.onrender.com/api/admin';
+
+        function formatItems(items) {
+            if (!items || !items.length) return '-';
+            return items.map((item) => `${item.quantity}x ${item.foodName}`).join(', ');
+        }
+
+        function getStatusBadgeClass(status) {
+            const value = (status || '').toLowerCase();
+            if (value === 'confirmed') return 'badge-confirmed';
+            if (value === 'preparing') return 'badge-preparing';
+            if (value === 'out for delivery') return 'badge-delivery';
+            if (value === 'delivered') return 'badge-delivered';
+            if (value === 'cancelled') return 'badge-cancelled';
+            return 'badge-pending';
+        }
+
+        function renderOrders(orders) {
+            const tbody = document.getElementById('order-body');
+
+            if (!orders.length) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No orders found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = orders.map((order) => `
+                <tr>
+                    <td>#${String(order._id).slice(-6)}</td>
+                    <td>${order.userName || 'Guest'}</td>
+                    <td>${formatItems(order.items)}</td>
+                    <td>${order.totalPrice || 0}</td>
+                    <td><span class="badge ${getStatusBadgeClass(order.status)}">${order.status || 'Pending'}</span></td>
+                    <td>
+                        <select class="status-select" onchange="updateOrderStatus('${order._id}', this.value)">
+                            <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                            <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
+                            <option value="Preparing" ${order.status === 'Preparing' ? 'selected' : ''}>Preparing</option>
+                            <option value="Out for Delivery" ${order.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
+                            <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                            <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                        </select>
+                    </td>
+                </tr>
             `).join('');
         }
+
+        async function loadOrders() {
+            try {
+                const response = await fetch(`${API_BASE}/orders`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    renderOrders(data.orders || []);
+                } else {
+                    document.getElementById('order-body').innerHTML =
+                        `<tr><td colspan="6" style="text-align:center;">${data.message || 'Failed to load orders'}</td></tr>`;
+                }
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                document.getElementById('order-body').innerHTML =
+                    '<tr><td colspan="6" style="text-align:center;">Unable to load orders.</td></tr>';
+            }
+        }
+
+        async function updateOrderStatus(orderId, status) {
+            try {
+                const response = await fetch(`${API_BASE}/order/status/${orderId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    loadOrders();
+                } else {
+                    alert(data.message || 'Failed to update order status');
+                }
+            } catch (error) {
+                console.error('Error updating order:', error);
+                alert('Could not update order status.');
+            }
+        }
+
         loadOrders();
     </script>
 </body>
