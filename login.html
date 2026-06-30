@@ -55,9 +55,14 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
         const data = await response.json();
 
         if (response.ok) {
+            const userData = {
+                email: email,
+                name: data.user?.name || data.name || email.split('@')[0]
+            };
+            localStorage.setItem('echoUser', JSON.stringify(userData));
+            localStorage.setItem('token', data.token);
             alert("Login Successful! ✅");
-            localStorage.setItem('token', data.token); // Token save karein
-            window.location.href = "menu.html"; // Login ke baad menu par bhej dein
+            window.location.href = "menu.html";
         } else {
             alert("Login Failed: " + (data.message || "Invalid credentials"));
         }
