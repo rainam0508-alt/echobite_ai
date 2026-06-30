@@ -1,3 +1,4 @@
+const API_URL = "https://echobite-ai-backend.onrender.com/api";
 // =====================
 // FOOD ITEMS (32)
 // =====================

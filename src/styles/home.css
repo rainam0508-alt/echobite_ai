@@ -1,0 +1,130 @@
+/* Home Page */
+.home-page {
+  min-height: 100vh;
+}
+
+/* Category Grid */
+.category-card {
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(255, 107, 53, 0.05));
+  border: 2px solid #ffe0c2;
+  border-radius: 15px;
+  padding: 30px;
+  text-align: center;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.category-card:hover {
+  transform: translateY(-8px);
+  border-color: #ff6b35;
+  box-shadow: 0 10px 30px rgba(255, 107, 53, 0.2);
+}
+
+.category-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.category-card h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.category-card p {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+/* About Box */
+.about-box {
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.about-box h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #ff6b35;
+}
+
+.about-box p {
+  color: #555;
+  line-height: 1.8;
+  font-size: 1rem;
+}
+
+/* Service Card */
+.service-card {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s;
+}
+
+.service-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.service-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.service-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.service-card p {
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Contact Box */
+.contact-box {
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.contact-box h3 {
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+  color: #ff6b35;
+}
+
+.contact-box p {
+  margin-bottom: 12px;
+  color: #555;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .about-box,
+  .contact-box {
+    padding: 25px;
+  }
+
+  .category-card {
+    padding: 20px;
+  }
+
+  .service-card {
+    padding: 20px;
+  }
+}

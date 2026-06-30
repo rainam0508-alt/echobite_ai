@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users Management - EchoBite Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: #12141c; color: #f3f4f6; display: flex; min-height: 100vh; }
+        
+        /* Sidebar Styles */
+        .sidebar { width: 260px; background-color: #1a1d29; padding: 25px 15px; display: flex; flex-direction: column; border-right: 1px solid #2a2f45; }
+        .sidebar h2 { color: #ff4757; font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 35px; letter-spacing: 1px; text-transform: uppercase; }
+        .sidebar a { display: flex; align-items: center; color: #a0aec0; padding: 12px 20px; text-decoration: none; border-radius: 10px; margin-bottom: 8px; font-size: 15px; transition: all 0.3s; }
+        .sidebar a i { margin-right: 12px; font-size: 18px; }
+        .sidebar a:hover, .sidebar a.active { background: linear-gradient(135deg, #ff4757, #ff6b81); color: #fff; box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3); }
+        
+        /* Main Content Styles */
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
+        .main-content h1 { font-size: 28px; font-weight: 600; margin-bottom: 30px; color: #fff; border-bottom: 2px solid #2a2f45; padding-bottom: 10px; }
+        
+        .card { background-color: #1a1d29; border-radius: 15px; padding: 25px; margin-bottom: 35px; border: 1px solid #2a2f45; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .card h3 { font-size: 18px; margin-bottom: 20px; color: #ff6b81; }
+        
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background-color: #24283b; color: #ff6b81; padding: 15px; font-size: 14px; text-transform: uppercase; }
+        td { padding: 15px; border-bottom: 1px solid #2a2f45; font-size: 14px; color: #e2e8f0; }
+        tr:hover td { background-color: #202436; }
+        
+        .badge { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-user { background-color: rgba(74, 144, 226, 0.1); color: #4a90e2; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>EchoBite Admin</h2>
+        <a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="users.html" class="active"><i class="fa-solid fa-users"></i> Users</a>
+        <a href="foods.html"><i class="fa-solid fa-utensils"></i> Foods</a>
+        <a href="orders.html"><i class="fa-solid fa-basket-shopping"></i> Orders</a>
+        <a href="reports.html"><i class="fa-solid fa-chart-line"></i> Reports</a>
+    </div>
+
+    <div class="main-content">
+        <h1>Users Management</h1>
+        <div class="card">
+            <h3><i class="fa-solid fa-user-shield"></i> Registered Customers</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Name</th>
+                            <th>Email Address</th>
+                            <th>Role</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTable">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Backend API base URL
+        const API_BASE = "https://echobite-ai-backend.onrender.com/api/admin/all-users";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadUsers();
+        });
+
+        // Function to fetch users from database
+        async function loadUsers() {
+            const table = document.getElementById("userTable");
+            try {
+                table.innerHTML = `<tr><td colspan="4" style="text-align:center; color: #a0aec0; font-style: italic;">Loading customers data...</td></tr>`;
+                
+                const response = await fetch(API_BASE);
+                if (!response.ok) throw new Error("Failed to fetch data");
+                
+                const users = await response.json();
+                console.log("Backend se mile data:",users);
+                renderUserTable(users);
+            } catch (error) {
+                console.error("Error loading users:", error);
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align:center; color: #ff4757; font-weight: 500;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Backend se connect nahi ho paya. Please check server status.
+                        </td>
+                    </tr>`;
+            }
+        }
+
+        // Function to inject rows dynamically into the HTML table
+        function renderUserTable(users) {
+            const table = document.getElementById("userTable");
+            table.innerHTML = ""; // Clearing the placeholder row
+
+            if (!users || users.length === 0) {
+                table.innerHTML = `<tr><td colspan="4" style="text-align:center; color: #a0aec0;">No registered users found in database.</td></tr>`;
+                return;
+            }
+
+            users.forEach(user => {
+                const displayRole = user.role ? user.role : 'Customer';
+                table.innerHTML += `
+                    <tr>
+                        <td style="font-family: monospace; color: #ff6b81; letter-spacing: 0.5px;">${user._id}</td>
+                        <td style="font-weight: 500; color: #fff;">${user.name}</td>
+                        <td style="color: #e2e8f0;">${user.email}</td>
+                        <td>
+                            <span class="badge badge-user">
+                                <i class="fa-solid fa-user-tag" style="margin-right: 5px; font-size: 11px;"></i>${displayRole}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body { background-color: #1a1a1d; color: #e0e0e0; font-family: sans-serif; padding: 20px; }
+        .admin-container { max-width: 1000px; margin: 40px auto; }
+        h2 { color: #ffffff; border-left: 5px solid #2196f3; padding-left: 15px; }
+        .report-table { width: 100%; border-collapse: separate; border-spacing: 0; background: #252528; border-radius: 12px; overflow: hidden; }
+        .report-table th { background-color: #1e2a39; color: #2196f3; padding: 18px; text-align: left; }
+        .report-table td { padding: 18px; border-bottom: 1px solid #333338; }
+        .report-table tr:hover { background-color: #1a222c; }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h2>User Reviews / Reports</h2>
+        <table class="report-table">
+            <thead><tr><th>User ID</th><th>Review / Comment</th><th>Rating</th></tr></thead>
+            <tbody id="report-body"><tr><td colspan="3" style="text-align:center;">Loading...</td></tr></tbody>
+        </table>
+    </div>
+    <script>
+        async function loadReports() {
+            const res = await fetch('https://YOUR_BACKEND_URL/api/reviews');
+            const data = await res.json();
+            document.getElementById('report-body').innerHTML = data.map(r => `
+                <tr><td>${r.userId}</td><td>${r.comment}</td><td>${r.rating} ⭐</td></tr>
+            `).join('');
+        }
+        loadReports();
+    </script>
+</body>
+</html>

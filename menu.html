@@ -200,325 +200,44 @@ Smart AI Food Ordering Experience
 
 <script>
 
-const menuData = [
+async function loadMenuFromAPI() {
+    try {
+        const response = await fetch('https://echobite-ai-backend.onrender.com/api/foods');
+        const data = await response.json();
+        const allFoods = data.foods; 
 
-{
-title:"🍕 Pizza Section",
-items:[
-{
-name:"Chicken Pizza",
-image:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800",
-small:699,
-medium:1199,
-large:1699
-},
-{
-name:"Pepperoni Pizza",
-image:"https://tse1.mm.bing.net/th/id/OIP.GpyurlCVLh1QGTSloYOvMAHaLH?r=0&w=682&h=1024&rs=1&pid=ImgDetMain&o=7&rm=3",
-small:749,
-medium:1299,
-large:1799
-},
-{
-name:"Cheese Pizza",
-image:"https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=800",
-small:649,
-medium:1099,
-large:1599
-},
-{
-name:"BBQ Pizza",
-image:"https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=800",
-small:799,
-medium:1399,
-large:1899
-}
-]
-},
+        const menuContainer = document.getElementById('menu');
+        
+        // --- YE LINE ZAROORI HAI ---
+        menuContainer.innerHTML = ""; 
+        // ---------------------------
 
-{
-title:"🍔 Burger Section",
-items:[
-{
-name:"Zinger Burger",
-image:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800",
-small:399,
-medium:599,
-large:799
-},
-{
-name:"Beef Burger",
-image:"https://images.unsplash.com/photo-1550547660-d9450f859349?w=800",
-small:449,
-medium:649,
-large:849
-},
-{
-name:"Chicken Burger",
-image:"https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=800",
-small:399,
-medium:599,
-large:799
-},
-{
-name:"Cheese Burger",
-image:"https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800",
-small:499,
-medium:699,
-large:899
-}
-]
-},
-
-{
-title:"🍟 Fast Food Section",
-items:[
-{
-name:"French Fries",
-image:"https://images.unsplash.com/photo-1576107232684-1279f390859f?w=800",
-small:199,
-medium:299,
-large:399
-},
-{
-name:"Loaded Fries",
-image:"https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=800",
-small:249,
-medium:349,
-large:449
-},
-{
-name:"Nuggets",
-image:"https://images.unsplash.com/photo-1562967916-eb82221dfb92?w=800",
-small:299,
-medium:449,
-large:599
-},
-{
-name:"Fried Chicken",
-image:"https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=800",
-small:499,
-medium:699,
-large:999
-}
-]
-},
-
-{
-title:"🍹 Drinks Section",
-items:[
-{
-name:"Cold Coffee",
-image:"https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=800",
-small:120,
-medium:180,
-large:250
-},
-{
-name:"Oreo Shake",
-image:"https://images.unsplash.com/photo-1577805947697-89e18249d767?w=800",
-small:150,
-medium:220,
-large:300
-},
-{
-name:"Mint Margarita",
-image:"https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=800",
-small:100,
-medium:170,
-large:250
-},
-{
-name:"Fresh Lime",
-image:"https://tse1.mm.bing.net/th/id/OIP.ssf5dwm9l2vXybaUuG_XYgHaGZ?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
-small:90,
-medium:150,
-large:220
-}
-]
-},
-
-{
-title:"🍰 Dessert Section",
-items:[
-{
-name:"Chocolate Cake",
-image:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800",
-small:299,
-medium:499,
-large:699
-},
-{
-name:"Brownie",
-image:"https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=800",
-small:199,
-medium:299,
-large:399
-},
-{
-name:"Ice Cream",
-image:"https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=800",
-small:149,
-medium:249,
-large:349
-},
-{
-name:"Donuts",
-image:"https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800",
-small:199,
-medium:299,
-large:399
-}
-]
-}
-
-];
-
-const menu = document.getElementById("menu");
-
-menuData.forEach(section => {
-
-let sectionHTML = `
-<h2 class="section-title">${section.title}</h2>
-
-<div class="menu-grid">
-`;
-
-section.items.forEach(item => {
-
-sectionHTML += `
-<div class="card">
-
-<img src="${item.image}">
-
-<div class="content">
-
-<h2>${item.name}</h2>
-
-<p class="category">
-${section.title}
-</p>
-
-<p class="desc">
-Fresh & delicious ${item.name} made with premium ingredients.
-</p>
-
-<!-- ⭐ STAR (UPDATED CLICKABLE) -->
-<div class="rating">
-  <span onclick="rate(this,1)">★</span>
-  <span onclick="rate(this,2)">★</span>
-  <span onclick="rate(this,3)">★</span>
-  <span onclick="rate(this,4)">★</span>
-  <span onclick="rate(this,5)">★</span>
-</div>
-
-<div class="size">
-
-<select onchange="changePrice(this)">
-
-<option value="${item.small}">
-Small
-</option>
-
-<option value="${item.medium}">
-Medium
-</option>
-
-<option value="${item.large}">
-Large
-</option>
-
-</select>
-
-</div>
-
-<div class="price">
-Rs ${item.small}
-</div>
-
-<button class="cart-btn">
-Add To Cart
-</button>
-
-</div>
-
-</div>
-`;
-
-});
-
-sectionHTML += `</div>`;
-
-menu.innerHTML += sectionHTML;
-
-});
-
-/* PRICE CHANGE */
-function changePrice(select){
-const priceBox = select.parentElement.nextElementSibling;
-priceBox.innerHTML = "Rs " + select.value;
-}
-
-/* ⭐ RATING FUNCTION (ADDED) */
-function rate(el,value){
-
-let parent = el.parentElement;
-let stars = parent.querySelectorAll("span");
-
-stars.forEach((s,i)=>{
-  if(i < value){
-    s.classList.add("active");
-  } else {
-    s.classList.remove("active");
-  }
-});
-
-}
-
-/* NAV SCROLL (ADDED) */
-function scrollToSection(title){
-
-let sections = document.querySelectorAll(".section-title");
-
-sections.forEach(sec=>{
-  if(sec.innerText === title){
-    sec.scrollIntoView({behavior:"smooth"});
-  }
-});
-
-}
-/* ADD TO CART - MENU PAGE */
-document.addEventListener("click", function(e) {
-  if(e.target.classList.contains("cart-btn")) {
-    
-    let card = e.target.closest(".card");
-    let name = card.querySelector("h2").innerText;
-    let priceText = card.querySelector(".price").innerText;
-    let price = parseInt(priceText.replace(/[^0-9]/g, ""));
-    let image = card.querySelector("img").src;
-
-    let cart = JSON.parse(localStorage.getItem("echo_cart")) || [];
-    
-    let existingItem = cart.find(i => i.name === name);
-    if(existingItem){
-      existingItem.quantity++;
-    } else {
-      cart.push({ name, price, image, quantity: 1 });
+        allFoods.forEach(item => {
+            menuContainer.innerHTML += `
+                <div class="card">
+                    
+<img src="https://echobite-ai-backend.onrender.com/images/${item.image}" 
+     style="width: 100px; height: 100px;" 
+     onerror="this.src='https://via.placeholder.com/100'">
+                    <h3>${item.name}</h3>
+                    <p>${item.category}</p>
+                    <div class="price-section">
+                        <span>Rs ${item.sizes[0].price}</span>
+                    </div>
+                    <button class="cart-btn" onclick="addToCart('${item.name}', ${item.sizes[0].price})">
+                        Add To Cart
+                    </button>
+                </div>
+            `;
+        });
+    } catch (error) {
+        console.error("Error loading menu:", error);
     }
+}
+// Page load hote hi chalayein
+loadMenuFromAPI();
 
-    localStorage.setItem("echo_cart", JSON.stringify(cart));
 
-    e.target.innerText = "✓ Added!";
-    e.target.style.background = "#28a745";
-
-    setTimeout(() => {
-      e.target.innerText = "Add To Cart";
-      e.target.style.background = "";
-    }, 1500);
-
-    alert(name + " added to cart! 🛒");
-  }
-});
 
 </script>
 

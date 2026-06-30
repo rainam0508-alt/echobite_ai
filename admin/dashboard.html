@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EchoBite Admin Dashboard</title>
+    <style>
+        /* Sidebar and Layout */
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #1a1a1d; color: #fff; display: flex; }
+        .sidebar { width: 260px; height: 100vh; background: #252528; padding-top: 20px; position: fixed; box-shadow: 2px 0 10px rgba(0,0,0,0.5); }
+        .sidebar h2 { color: #ff5722; text-align: center; margin-bottom: 30px; }
+        .sidebar ul { list-style: none; padding: 0; }
+        .sidebar ul li { padding: 15px 30px; }
+        .sidebar ul li a { color: #ccc; text-decoration: none; font-size: 18px; }
+        .sidebar ul li:hover { background: #ff5722; }
+
+        /* Dashboard Content */
+        .main-content { margin-left: 260px; padding: 40px; width: 100%; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .stat-card { background: #252528; padding: 30px; border-radius: 15px; border-bottom: 4px solid #ff5722; text-align: center; }
+        .stat-card h3 { color: #888; font-size: 14px; text-transform: uppercase; }
+        .stat-card p { font-size: 32px; font-weight: bold; color: #ff5722; margin: 10px 0 0; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>EchoBite Admin</h2>
+    <ul>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="foods.html">Foods Management</a></li>
+        <li><a href="orders.html">Orders</a></li>
+        <li><a href="reports.html">Reviews / Reports</a></li>
+    </ul>
+</div>
+
+<div class="main-content">
+    <h2>Dashboard Overview</h2>
+    <div class="stats-grid">
+        <div class="stat-card"><h3>Users</h3><p id="users-count">...</p></div>
+        <div class="stat-card"><h3>Orders</h3><p id="orders-count">...</p></div>
+        <div class="stat-card"><h3>Foods</h3><p id="foods-count">...</p></div>
+        <div class="stat-card"><h3>Reports</h3><p id="reports-count">...</p></div>
+    </div>
+</div>
+
+<script>
+    async function loadDashboard() {
+        const baseUrl = 'https://echobite-ai-backend.onrender.com/api/admin';
+        try {
+            const [usersRes, ordersRes, foodsRes, reportsRes] = await Promise.all([
+                fetch(`${baseUrl}/users`),
+                fetch(`${baseUrl}/orders`),
+                fetch(`${baseUrl}/foods`),
+                fetch(`${baseUrl}/reports`)
+            ]);
+
+            document.getElementById('users-count').innerText = (await usersRes.json()).length;
+            document.getElementById('orders-count').innerText = (await ordersRes.json()).length;
+            document.getElementById('foods-count').innerText = (await foodsRes.json()).length;
+            document.getElementById('reports-count').innerText = (await reportsRes.json()).length;
+        } catch(err) { 
+            console.error("API Error:", err);
+        }
+    }
+    loadDashboard();
+</script>
+
+</body>
+</html>

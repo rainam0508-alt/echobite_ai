@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body { background-color: #1a1a1d; color: #e0e0e0; font-family: sans-serif; padding: 20px; }
+        .admin-container { max-width: 1000px; margin: 40px auto; }
+        h2 { color: #ffffff; border-left: 5px solid #4caf50; padding-left: 15px; }
+        .order-table { width: 100%; border-collapse: separate; border-spacing: 0; background: #252528; border-radius: 12px; overflow: hidden; }
+        .order-table th { background-color: #1e392a; color: #4caf50; padding: 18px; text-align: left; }
+        .order-table td { padding: 18px; border-bottom: 1px solid #333338; }
+        .order-table tr:hover { background-color: #1a2a22; }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h2>Customer Orders</h2>
+        <table class="order-table">
+            <thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th></tr></thead>
+            <tbody id="order-body"><tr><td colspan="5" style="text-align:center;">Loading...</td></tr></tbody>
+        </table>
+    </div>
+    <script>
+        async function loadOrders() {
+            const res = await fetch('https://YOUR_BACKEND_URL/api/orders');
+            const data = await res.json();
+            document.getElementById('order-body').innerHTML = data.map(o => `
+                <tr><td>#${o._id.slice(-6)}</td><td>${o.customerName}</td><td>${o.items.join(', ')}</td><td>PKR ${o.totalPrice}</td><td>${o.status}</td></tr>
+            `).join('');
+        }
+        loadOrders();
+    </script>
+</body>
+</html>

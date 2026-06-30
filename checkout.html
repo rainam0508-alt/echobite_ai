@@ -303,7 +303,7 @@
       return;
     }
     map = L.map('mapContainer').setView([33.6844, 73.0479], 13);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
     }).addTo(map);
     marker = L.marker([33.6844, 73.0479], { draggable: true }).addTo(map);
@@ -363,7 +363,7 @@
       address
     };
     try {
-      const response = await fetch('http://localhost:3000/api/place-order', {
+      const response = await fetch('https://echobite-ai-backend.onrender.com/api/place-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData)

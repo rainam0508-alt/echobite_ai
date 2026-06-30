@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foods Management - EchoBite Admin</title>
+    <!-- Google Fonts & FontAwesome Icons for modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #12141c;
+            color: #f3f4f6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 260px;
+            background-color: #1a1d29;
+            padding: 25px 15px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #2a2f45;
+        }
+
+        .sidebar h2 {
+            color: #ff4757;
+            font-size: 22px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 35px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            color: #a0aec0;
+            text-decoration: none;
+            padding: 12px 20px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar a i {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: linear-gradient(135deg, #ff4757, #ff6b81);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .main-content h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #fff;
+            border-bottom: 2px solid #2a2f45;
+            padding-bottom: 10px;
+        }
+
+        /* Form Container - Cards Style */
+        .card {
+            background-color: #1a1d29;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 35px;
+            border: 1px solid #2a2f45;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #ff6b81;
+        }
+
+        .form-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) 130px;
+            gap: 15px;
+            align-items: center;
+        }
+
+        input, select {
+            background-color: #24283b;
+            border: 1px solid #3b4261;
+            color: #fff;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #ff4757;
+            box-shadow: 0 0 8px rgba(255, 71, 87, 0.4);
+        }
+
+        button.btn-add {
+            background: linear-gradient(135deg, #ff4757, #ff6b81);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button.btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+        }
+
+        /* Table Design */
+        .table-container {
+            background-color: #1a1d29;
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid #2a2f45;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: #24283b;
+            color: #ff6b81;
+            padding: 15px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        th:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+        th:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #2a2f45;
+            font-size: 14px;
+            color: #e2e8f0;
+        }
+
+        tr:hover td {
+            background-color: #202436;
+        }
+
+        /* Delete Button Custom Styling */
+        .btn-delete {
+            background-color: rgba(255, 71, 87, 0.1);
+            color: #ff4757;
+            border: 1px solid #ff4757;
+            padding: 6px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-delete:hover {
+            background-color: #ff4757;
+            color: white;
+            box-shadow: 0 0 10px rgba(255, 71, 87, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <h2>EchoBite Admin</h2>
+        <a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="users.html"><i class="fa-solid fa-users"></i> Users</a>
+        <a href="foods.html" class="active"><i class="fa-solid fa-utensils"></i> Foods</a>
+        <a href="orders.html"><i class="fa-solid fa-basket-shopping"></i> Orders</a>
+        <a href="reports.html"><i class="fa-solid fa-chart-line"></i> Reports</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>Foods Management</h1>
+
+        <!-- Add New Food Section -->
+        <div class="card">
+            <h3><i class="fa-solid fa-plus-circle"></i> Add New Food Item</h3>
+            <div class="form-group">
+                <input type="text" id="foodName" placeholder="Enter Food Name">
+                <input type="number" id="foodPrice" placeholder="Price (e.g. 699)">
+                <select id="foodCategory">
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="pizza">Pizza</option>
+                    <option value="burger">Burger</option>
+                    <option value="deals">Deals</option>
+                    <option value="drinks">Drinks</option>
+                </select>
+                <button class="btn-add" onclick="addFood()">Add Food</button>
+            </div>
+        </div>
+
+        <!-- Food List View -->
+        <div class="card">
+            <h3><i class="fa-solid fa-list"></i> Current Food List</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Price (PKR)</th>
+                            <th>Category</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="foodTable">
+                        <!-- Data dynamic javascript se yahan load hoga -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connecting the Javascript File -->
+    <script src="admin.js"></script>
+</body>
+</html>
