@@ -24,12 +24,13 @@ async function loadFoods() {
 // ==========================================
 async function addFood() {
     let name = document.getElementById("foodName").value.trim();
+    let size = document.getElementById("foodSize").value;
     let price = document.getElementById("foodPrice").value;
     let category = document.getElementById("foodCategory").value;
     let imageFile = document.getElementById("foodImage").files[0];
 
-    if (!name || !price || !category) {
-        alert("Fill all fields");
+    if (!name || !size || !price || !category) {
+        alert("Fill all fields including size");
         return;
     }
 
@@ -58,7 +59,7 @@ async function addFood() {
             name,
             category,
             description: "Yummy food item",
-            sizes: [{ size: "Regular", price: Number(price) }]
+            sizes: [{ size, price: Number(price) }]
         };
 
         if (imageName) {
@@ -80,6 +81,7 @@ async function addFood() {
         }
 
         document.getElementById("foodName").value = "";
+        document.getElementById("foodSize").value = "";
         document.getElementById("foodPrice").value = "";
         document.getElementById("foodCategory").value = "";
         document.getElementById("foodImage").value = "";
@@ -116,6 +118,16 @@ async function deleteFood(id) {
 // ==========================================
 // RENDER TABLE (DISPLAY DATA)
 // ==========================================
+function formatSizes(sizes) {
+    if (!sizes || !sizes.length) return "Regular";
+    return sizes.map((item) => item.size).join(", ");
+}
+
+function formatPrices(sizes) {
+    if (!sizes || !sizes.length) return "0";
+    return sizes.map((item) => `${item.size}: ${item.price}`).join(" | ");
+}
+
 function renderTable(foods) {
     let table = document.getElementById("foodTable");
     table.innerHTML = "";
@@ -130,7 +142,8 @@ function renderTable(foods) {
                 <td>${food._id}</td>
                 <td><img class="food-thumb" src="${imageSrc}" alt="${food.name}" onerror="this.src='https://via.placeholder.com/48?text=No+Img'"></td>
                 <td>${food.name}</td>
-                <td>${(food.sizes && food.sizes[0]) ? food.sizes[0].price : '450'}</td>
+                <td>${formatSizes(food.sizes)}</td>
+                <td>${formatPrices(food.sizes)}</td>
                 <td>${food.category}</td>
                 <td>
                     <button class="btn-delete" onclick="deleteFood('${food._id}')">Delete</button>

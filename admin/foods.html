@@ -240,6 +240,14 @@
             <h3><i class="fa-solid fa-plus-circle"></i> Add New Food Item</h3>
             <div class="form-group">
                 <input type="text" id="foodName" placeholder="Enter Food Name">
+                <select id="foodSize">
+                    <option value="" disabled selected>Select Size</option>
+                    <option value="Small">Small</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Regular">Regular</option>
+                    <option value="Large">Large</option>
+                    <option value="XL">XL</option>
+                </select>
                 <input type="number" id="foodPrice" placeholder="Price (e.g. 699)">
                 <select id="foodCategory">
                     <option value="" disabled selected>Select Category</option>
@@ -263,6 +271,7 @@
                             <th>ID</th>
                             <th>Image</th>
                             <th>Name</th>
+                            <th>Size</th>
                             <th>Price (PKR)</th>
                             <th>Category</th>
                             <th>Action</th>

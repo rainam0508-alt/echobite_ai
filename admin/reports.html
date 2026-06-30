@@ -1,32 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews / Reports - EchoBite Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background-color: #1a1a1d; color: #e0e0e0; font-family: sans-serif; padding: 20px; }
-        .admin-container { max-width: 1000px; margin: 40px auto; }
-        h2 { color: #ffffff; border-left: 5px solid #2196f3; padding-left: 15px; }
-        .report-table { width: 100%; border-collapse: separate; border-spacing: 0; background: #252528; border-radius: 12px; overflow: hidden; }
-        .report-table th { background-color: #1e2a39; color: #2196f3; padding: 18px; text-align: left; }
-        .report-table td { padding: 18px; border-bottom: 1px solid #333338; }
-        .report-table tr:hover { background-color: #1a222c; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: #12141c; color: #f3f4f6; display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background-color: #1a1d29; padding: 25px 15px; display: flex; flex-direction: column; border-right: 1px solid #2a2f45; }
+        .sidebar h2 { color: #ff4757; font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 35px; letter-spacing: 1px; text-transform: uppercase; }
+        .sidebar a { display: flex; align-items: center; color: #a0aec0; text-decoration: none; padding: 12px 20px; margin-bottom: 8px; border-radius: 10px; font-size: 15px; font-weight: 500; transition: all 0.3s ease; }
+        .sidebar a i { margin-right: 12px; font-size: 18px; }
+        .sidebar a:hover, .sidebar a.active { background: linear-gradient(135deg, #ff4757, #ff6b81); color: #fff; box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3); }
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
+        .main-content h1 { font-size: 28px; font-weight: 600; margin-bottom: 30px; color: #fff; border-bottom: 2px solid #2a2f45; padding-bottom: 10px; }
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background-color: #1a1d29; border: 1px solid #2a2f45; border-radius: 15px; padding: 20px; }
+        .stat-card h3 { color: #a0aec0; font-size: 14px; margin-bottom: 8px; }
+        .stat-card p { color: #ff6b81; font-size: 28px; font-weight: 700; }
+        .table-container { background-color: #1a1d29; border-radius: 15px; padding: 20px; border: 1px solid #2a2f45; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background-color: #24283b; color: #ff6b81; padding: 15px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { padding: 15px; border-bottom: 1px solid #2a2f45; font-size: 14px; color: #e2e8f0; vertical-align: top; }
+        tr:hover td { background-color: #202436; }
+        .rating { color: #ffc107; font-weight: 600; white-space: nowrap; }
+        .comment { max-width: 420px; line-height: 1.5; }
+        .meta { color: #a0aec0; font-size: 12px; margin-top: 4px; }
     </style>
 </head>
 <body>
-    <div class="admin-container">
-        <h2>User Reviews / Reports</h2>
-        <table class="report-table">
-            <thead><tr><th>User ID</th><th>Review / Comment</th><th>Rating</th></tr></thead>
-            <tbody id="report-body"><tr><td colspan="3" style="text-align:center;">Loading...</td></tr></tbody>
-        </table>
+    <div class="sidebar">
+        <h2>EchoBite Admin</h2>
+        <a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+        <a href="users.html"><i class="fa-solid fa-users"></i> Users</a>
+        <a href="foods.html"><i class="fa-solid fa-utensils"></i> Foods</a>
+        <a href="orders.html"><i class="fa-solid fa-basket-shopping"></i> Orders</a>
+        <a href="reports.html" class="active"><i class="fa-solid fa-chart-line"></i> Reports</a>
     </div>
+
+    <div class="main-content">
+        <h1>User Reviews / Reports</h1>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <h3>Total Reviews</h3>
+                <p id="total-reviews">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Average Rating</h3>
+                <p id="avg-rating">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Revenue</h3>
+                <p id="total-revenue">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Orders</h3>
+                <p id="total-orders">0</p>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Food Item</th>
+                        <th>Review / Comment</th>
+                        <th>Rating</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="report-body">
+                    <tr><td colspan="5" style="text-align:center;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <script>
-        async function loadReports() {
-            const res = await fetch('https://YOUR_BACKEND_URL/api/reviews');
-            const data = await res.json();
-            document.getElementById('report-body').innerHTML = data.map(r => `
-                <tr><td>${r.userId}</td><td>${r.comment}</td><td>${r.rating} ⭐</td></tr>
+        const BACKEND_URL = 'https://echobite-ai-backend.onrender.com';
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function formatDate(value) {
+            if (!value) return '-';
+            return new Date(value).toLocaleString();
+        }
+
+        function getFoodName(review) {
+            if (review.productId && typeof review.productId === 'object') {
+                return review.productId.name || 'Unknown Food';
+            }
+            return review.productId || 'Unknown Food';
+        }
+
+        function renderStars(rating) {
+            const stars = Math.max(0, Math.min(5, Number(rating) || 0));
+            return `${'★'.repeat(stars)}${'☆'.repeat(5 - stars)} (${stars})`;
+        }
+
+        function renderReviews(reviews) {
+            const tbody = document.getElementById('report-body');
+
+            if (!reviews.length) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No reviews found yet.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = reviews.map((review) => `
+                <tr>
+                    <td>
+                        <strong>${escapeHtml(review.userName || 'User')}</strong>
+                        <div class="meta">${escapeHtml(String(review.userId || '').slice(-6))}</div>
+                    </td>
+                    <td>${escapeHtml(getFoodName(review))}</td>
+                    <td class="comment">${escapeHtml(review.comment || 'No comment')}</td>
+                    <td class="rating">${renderStars(review.rating)}</td>
+                    <td>${formatDate(review.createdAt)}</td>
+                </tr>
             `).join('');
         }
+
+        function updateReviewStats(reviews) {
+            const totalReviews = reviews.length;
+            const avgRating = totalReviews
+                ? (reviews.reduce((sum, review) => sum + (Number(review.rating) || 0), 0) / totalReviews).toFixed(1)
+                : '0';
+
+            document.getElementById('total-reviews').innerText = totalReviews;
+            document.getElementById('avg-rating').innerText = avgRating;
+        }
+
+        async function loadReports() {
+            try {
+                const [reviewsRes, reportsRes] = await Promise.all([
+                    fetch(`${BACKEND_URL}/api/review/all`),
+                    fetch(`${BACKEND_URL}/api/admin/reports`)
+                ]);
+
+                const reviewsData = await reviewsRes.json();
+                const reportsData = await reportsRes.json();
+
+                if (reviewsRes.ok && reviewsData.success) {
+                    const reviews = reviewsData.reviews || [];
+                    renderReviews(reviews);
+                    updateReviewStats(reviews);
+                } else {
+                    document.getElementById('report-body').innerHTML =
+                        `<tr><td colspan="5" style="text-align:center;">${reviewsData.message || 'Failed to load reviews'}</td></tr>`;
+                }
+
+                if (reportsRes.ok && reportsData.success) {
+                    document.getElementById('total-revenue').innerText = `PKR ${reportsData.revenue || 0}`;
+                    document.getElementById('total-orders').innerText = reportsData.totalOrders || 0;
+                }
+            } catch (error) {
+                console.error('Error loading reports:', error);
+                document.getElementById('report-body').innerHTML =
+                    '<tr><td colspan="5" style="text-align:center;">Unable to load reviews/reports.</td></tr>';
+            }
+        }
+
         loadReports();
     </script>
 </body>

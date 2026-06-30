@@ -313,6 +313,31 @@
       letter-spacing: -0.01em;
     }
 
+    .food-size {
+      width: 100%;
+      margin-top: 0.65rem;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      background: #fff;
+      color: #2c241e;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .food-size-label {
+      display: inline-block;
+      margin-top: 0.65rem;
+      padding: 0.35rem 0.7rem;
+      border-radius: var(--radius-pill);
+      background: #fff3e8;
+      color: var(--color-primary);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
     .cart-btn {
       width: 100%;
       margin-top: 0.75rem;
@@ -532,8 +557,20 @@
       }
 
       foods.forEach(item => {
-        const price = item.sizes && item.sizes[0] ? item.sizes[0].price : 0;
+        const sizes = item.sizes && item.sizes.length
+          ? item.sizes
+          : [{ size: 'Regular', price: 0 }];
+        const defaultSize = sizes[0];
         const safeName = item.name.replace(/'/g, "\\'");
+        const sizeControl = sizes.length > 1
+          ? `<select class="food-size" id="size-${item._id}" onchange="updateCardPrice('${item._id}')">
+              ${sizes.map((sizeItem) => `
+                <option value="${sizeItem.size}" data-price="${sizeItem.price}">
+                  ${sizeItem.size} - Rs ${sizeItem.price}
+                </option>
+              `).join('')}
+            </select>`
+          : `<span class="food-size-label">${defaultSize.size}</span>`;
 
         menuContainer.innerHTML += `
           <article class="card" role="listitem" data-category="${item.category}">
@@ -548,10 +585,11 @@
             <div class="content">
               <h3>${item.name}</h3>
               <p class="category">${item.category}</p>
+              ${sizeControl}
               <div class="price-section">
-                <span class="price">Rs ${price}</span>
+                <span class="price" id="price-${item._id}">Rs ${defaultSize.price}</span>
               </div>
-              <button type="button" class="cart-btn" onclick="addToCart('${safeName}', ${price})">
+              <button type="button" class="cart-btn" onclick="addToCart('${safeName}', '${item._id}')">
                 <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
                 Add To Cart
               </button>
@@ -559,6 +597,35 @@
           </article>
         `;
       });
+    }
+
+    function updateCardPrice(foodId) {
+      const sizeSelect = document.getElementById(`size-${foodId}`);
+      const priceEl = document.getElementById(`price-${foodId}`);
+      if (!sizeSelect || !priceEl) return;
+
+      const selectedOption = sizeSelect.selectedOptions[0];
+      priceEl.textContent = `Rs ${selectedOption.dataset.price}`;
+    }
+
+    function getSelectedSizeAndPrice(food) {
+      const sizes = food.sizes && food.sizes.length
+        ? food.sizes
+        : [{ size: 'Regular', price: 0 }];
+      const sizeSelect = document.getElementById(`size-${food._id}`);
+
+      if (sizeSelect) {
+        const selectedOption = sizeSelect.selectedOptions[0];
+        return {
+          size: selectedOption.value,
+          price: Number(selectedOption.dataset.price)
+        };
+      }
+
+      return {
+        size: sizes[0].size || 'Regular',
+        price: Number(sizes[0].price || 0)
+      };
     }
 
     function filterByCategory(category, buttonEl) {
@@ -577,24 +644,26 @@
 
     const BACKEND_URL = EchoCart.BACKEND_URL;
 
-    async function addToCart(name, price) {
-      const food = allFoods.find(item => item.name === name);
+    async function addToCart(name, foodId) {
+      const food = allFoods.find(item => item._id === foodId);
 
       if (!food || !food._id) {
         alert('Food item not found.');
         return;
       }
 
+      const { size, price } = getSelectedSizeAndPrice(food);
+
       const result = await EchoCart.addToCart({
         productId: food._id,
         name,
-        price: Number(price),
+        price,
         image: EchoCart.buildImageUrl(food.image),
-        selectedSize: 'Regular'
+        selectedSize: size
       });
 
       if (result.success) {
-        alert(name + ' cart mein add ho gaya! 🛒\nTotal items: ' + result.totalItems);
+        alert(`${name} (${size}) cart mein add ho gaya! 🛒\nTotal items: ${result.totalItems}`);
       }
     }
 
