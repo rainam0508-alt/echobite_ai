@@ -259,9 +259,10 @@
   </div>
 </div>
 
+<script src="cart.js"></script>
 <script>
   // ---------- CART DATA ----------
-  function getCart() { return JSON.parse(localStorage.getItem('echo_cart')) || []; }
+  function getCart() { return EchoCart.getLocalCart(); }
 
   // ---------- RENDER ORDER SUMMARY (Left side) ----------
   function renderOrderSummary() {
@@ -388,8 +389,11 @@
   // Event listeners
   document.getElementById('placeOrderBtn').addEventListener('click', placeOrder);
   document.getElementById('deliveryOptions').addEventListener('change', () => updateTotals());
-  // initial render
-  renderOrderSummary();
+
+  (async function initCheckout() {
+    await EchoCart.fetchCart();
+    renderOrderSummary();
+  })();
 </script>
 </body>
 </html>

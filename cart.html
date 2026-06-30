@@ -279,46 +279,46 @@
   </div>
 </div>
 
+<script src="cart.js"></script>
 <script>
-  // ----- CART UTILITIES -----
-  function getCart() {
-    return JSON.parse(localStorage.getItem('echo_cart')) || [];
-  }
+  let currentCart = [];
 
-  function saveCart(cart) {
-    localStorage.setItem('echo_cart', JSON.stringify(cart));
-    renderCartPage();    // refresh UI
-    updateCartSubtotal();
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
   }
 
   function updateCartSubtotal() {
-    const cart = getCart();
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const subtotal = currentCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const subtotalSpan = document.getElementById('cartSubtotal');
     if (subtotalSpan) subtotalSpan.innerText = `Rs ${subtotal.toFixed(2)}`;
-    // enable/disable proceed button if cart empty
+
     const proceedBtn = document.getElementById('proceedToCheckoutBtn');
     if (proceedBtn) {
-      proceedBtn.disabled = cart.length === 0;
+      proceedBtn.disabled = currentCart.length === 0;
     }
   }
 
   function renderCartPage() {
-    const cart = getCart();
     const container = document.getElementById('cartItemsList');
     if (!container) return;
 
-    if (cart.length === 0) {
+    if (currentCart.length === 0) {
       container.innerHTML = `<div class="empty-cart">
         <i class="fas fa-shopping-bag"></i> Your cart is empty. 
-        <a href="index.html" style="color:#dc2f02;">Browse menu</a>
+        <a href="menu.html" style="color:#dc2f02;">Browse menu</a>
       </div>`;
       updateCartSubtotal();
       return;
     }
 
     let cartHtml = '';
-    cart.forEach((item, idx) => {
+    currentCart.forEach((item, idx) => {
       cartHtml += `
         <div class="cart-item" data-index="${idx}">
           <img class="cart-item-img" src="${item.image}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/70?text=Food'">
@@ -338,65 +338,66 @@
     });
     container.innerHTML = cartHtml;
 
-    // attach events
     document.querySelectorAll('.dec-qty').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        let idx = parseInt(btn.dataset.idx);
-        let cartArr = getCart();
-        if (cartArr[idx].quantity > 1) {
-          cartArr[idx].quantity--;
-          saveCart(cartArr);
-        } else {
-          cartArr.splice(idx, 1);
-          saveCart(cartArr);
-        }
+      btn.addEventListener('click', async () => {
+        const idx = parseInt(btn.dataset.idx, 10);
+        const item = currentCart[idx];
+        if (!item) return;
+
+        currentCart = await EchoCart.updateItemQuantity(
+          item.productId || item.id,
+          item.size || 'Regular',
+          item.quantity - 1
+        );
+        renderCartPage();
       });
     });
 
     document.querySelectorAll('.inc-qty').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        let idx = parseInt(btn.dataset.idx);
-        let cartArr = getCart();
-        cartArr[idx].quantity++;
-        saveCart(cartArr);
+      btn.addEventListener('click', async () => {
+        const idx = parseInt(btn.dataset.idx, 10);
+        const item = currentCart[idx];
+        if (!item) return;
+
+        currentCart = await EchoCart.updateItemQuantity(
+          item.productId || item.id,
+          item.size || 'Regular',
+          item.quantity + 1
+        );
+        renderCartPage();
       });
     });
 
     document.querySelectorAll('.remove-item').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        let idx = parseInt(btn.dataset.idx);
-        let cartArr = getCart();
-        cartArr.splice(idx, 1);
-        saveCart(cartArr);
+      btn.addEventListener('click', async () => {
+        const idx = parseInt(btn.dataset.idx, 10);
+        const item = currentCart[idx];
+        if (!item) return;
+
+        currentCart = await EchoCart.updateItemQuantity(
+          item.productId || item.id,
+          item.size || 'Regular',
+          0
+        );
+        renderCartPage();
       });
     });
 
     updateCartSubtotal();
   }
 
-  // simple escape to avoid XSS
-  function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
-  }
-
-  // proceed to checkout page
   document.getElementById('proceedToCheckoutBtn')?.addEventListener('click', () => {
-    const cart = getCart();
-    if (cart.length === 0) {
+    if (currentCart.length === 0) {
       alert('Your cart is empty. Add some delicious items first!');
       return;
     }
     window.location.href = 'checkout.html';
   });
 
-  // initial render
-  renderCartPage();
+  (async function initCartPage() {
+    currentCart = await EchoCart.fetchCart();
+    renderCartPage();
+  })();
 </script>
 </body>
 </html>

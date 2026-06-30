@@ -513,6 +513,7 @@ Contact
 </footer>
 
 <script src="auth.js"></script>
+<script src="cart.js"></script>
 <script>
 
 // HERO SLIDER (SAFE JS)
@@ -525,24 +526,24 @@ index = (index + 1) % slides.length;
 slides[index].classList.add("active");
 }, 3000);
 // ADD TO CART
-let cart = JSON.parse(localStorage.getItem("echo_cart"))||[];
-
 document.querySelectorAll(".add-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
+  btn.addEventListener("click", async () => {
     let card = btn.closest(".product-card");
     let name = card.querySelector("h3").innerText;
     let price = card.querySelector(".price").innerText;
+    let priceNum = parseInt(price.replace(/[^0-9]/g, ""), 10);
+    let image = card.querySelector("img").src;
 
-    let priceNum = parseInt(price.replace(/[^0-9]/g, ""));
-let image = card.querySelector("img").src;
+    const food = await EchoCart.resolveFoodByName(name);
+    const result = await EchoCart.addToCart({
+      productId: food?._id,
+      name,
+      price: food?.sizes?.[0]?.price || priceNum,
+      image: food?.image ? EchoCart.buildImageUrl(food.image) : image,
+      selectedSize: 'Regular'
+    });
 
-let existingItem = cart.find(i => i.name === name);
-if(existingItem){
-  existingItem.quantity++;
-} else {
-  cart.push({ name, price: priceNum, image, quantity: 1 });
-}
-    localStorage.setItem("echo_cart", JSON.stringify(cart));
+    if (!result.success) return;
 
     btn.innerText = "✓ Added!";
     btn.style.background = "#28a745";
@@ -552,9 +553,8 @@ if(existingItem){
       btn.style.background = "#ff6b35";
     }, 1500);
 
-    alert(name + " cart mein add ho gaya! 🛒\nTotal items: " + cart.length);
-});
-  
+    alert(name + " cart mein add ho gaya! 🛒\nTotal items: " + result.totalItems);
+  });
 });
 
 
