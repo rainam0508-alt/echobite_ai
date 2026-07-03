@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Orders - EchoBite</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial;
+}
+
+body{
+  background:#fff6ef;
+}
+
+/* HEADER */
+header{
+  background: linear-gradient(135deg,#ff6a00,#ff8c1a);
+  color:#fff;
+  padding:18px;
+  text-align:center;
+  font-size:24px;
+  font-weight:700;
+}
+
+/* CONTAINER */
+.container{
+  max-width:950px;
+  margin:auto;
+  padding:20px;
+}
+
+/* SEARCH FIX (FULL WIDTH + BIGGER) */
+.search-box{
+  width:100%;
+  padding:14px 16px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  font-size:16px;
+  margin-bottom:15px;
+  outline:none;
+}
+
+/* FILTERS */
+.filters{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.filters button{
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  background:#eee;
+  font-size:14px;
+  cursor:pointer;
+}
+
+.filters button.active{
+  background:#ff6a00;
+  color:#fff;
+}
+
+/* ORDER CARD */
+.order-card{
+  background:#fff;
+  border-radius:16px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.08);
+  padding:16px;
+  margin-bottom:16px;
+}
+
+.top{
+  display:flex;
+  gap:15px;
+  align-items:center;
+}
+
+.top img{
+  width:90px;
+  height:90px;
+  border-radius:14px;
+  object-fit:cover;
+}
+
+.details{
+  flex:1;
+}
+
+.details h3{
+  font-size:18px;
+  margin-bottom:6px;
+}
+
+.small{
+  font-size:13px;
+  color:#666;
+  margin-bottom:4px;
+}
+
+/* STATUS */
+.status{
+  display:inline-block;
+  padding:5px 10px;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:600;
+  margin-top:6px;
+}
+
+.pending{background:#fff3cd;color:#856404;}
+.delivered{background:#d4edda;color:#155724;}
+.cancelled{background:#f8d7da;color:#721c24;}
+
+/* BUTTONS FIX (UNIFORM SYSTEM) */
+.actions{
+  margin-top:12px;
+  display:flex;
+  gap:10px;
+}
+
+/* ALL BUTTONS SAME BASE */
+.actions button{
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+/* COLORS */
+.view{background:#ff6a00;color:#fff;}
+.reorder{background:#28a745;color:#fff;}
+.cancel{background:#dc3545;color:#fff;}
+
+/* hover */
+.actions button:hover{
+  opacity:0.85;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+  .top{
+    flex-direction:column;
+    text-align:center;
+  }
+
+  .actions{
+    flex-direction:column;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>🍔 My Orders</header>
+
+<div class="container">
+
+  <!-- SEARCH FIXED -->
+  <input type="text" class="search-box" placeholder="Search Order ID...">
+
+  <!-- FILTERS -->
+  <div class="filters">
+    <button class="active">All</button>
+    <button>Pending</button>
+    <button>Delivered</button>
+  </div>
+
+  <!-- ORDER CARD 1 -->
+  <div class="order-card" data-order-id="10234" data-status="pending">
+
+    <div class="top">
+      <img src="https://via.placeholder.com/120">
+
+      <div class="details">
+        <h3>Order #10234</h3>
+        <div class="small">03 July 2026 | 6:45 PM</div>
+        <div class="small">Burger, Fries, Coke</div>
+        <div class="small">Total: Rs. 850</div>
+        <div class="status pending">Pending</div>
+      </div>
+    </div>
+
+    <!-- FIX: ALWAYS SAME 3 BUTTONS -->
+    <div class="actions">
+      <button class="view" onclick="viewOrder(10234)">View</button>
+      <button class="reorder" onclick="reorder(10234)">Reorder</button>
+      <button class="cancel" onclick="cancelOrder(10234)">Cancel</button>
+    </div>
+  </div>
+
+  <!-- ORDER CARD 2 -->
+  <div class="order-card" data-order-id="10210" data-status="delivered">
+
+    <div class="top">
+      <img src="https://via.placeholder.com/120">
+
+      <div class="details">
+        <h3>Order #10210</h3>
+        <div class="small">02 July 2026 | 2:30 PM</div>
+        <div class="small">Pizza, Juice</div>
+        <div class="small">Total: Rs. 1200</div>
+        <div class="status delivered">Delivered</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="view" onclick="viewOrder(10210)">View</button>
+      <button class="reorder" onclick="reorder(10210)">Reorder</button>
+      <button class="cancel" onclick="cancelOrder(10210)">Cancel</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- BASIC READY JS (API READY HOOKS) -->
+<script>
+function viewOrder(id){
+  console.log("View Order:", id);
+}
+
+function reorder(id){
+  console.log("Reorder:", id);
+}
+
+function cancelOrder(id){
+  console.log("Cancel Order:", id);
+}
+</script>
+
+</body>
+</html>
