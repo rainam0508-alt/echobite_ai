@@ -576,7 +576,7 @@
           <article class="card" role="listitem" data-category="${item.category}">
             <div class="card__image-wrap">
               <img
-                src="https://echobite-ai-backend.onrender.com/images/${item.image}"
+                src="${EchoCart.buildImageUrl(item.image)}"
                 alt="${item.name}"
                 loading="lazy"
                 onerror="this.src='https://via.placeholder.com/400x200?text=Food+Image'"

@@ -22,11 +22,30 @@ async function loadFoods() {
 // ==========================================
 // ADD FOOD (POST API)
 // ==========================================
+function normalizeCategory(category) {
+    const value = (category || '').trim();
+    const lower = value.toLowerCase();
+
+    const aliases = {
+        pizza: 'Pizza',
+        burger: 'Burger',
+        drinks: 'Drinks',
+        drink: 'Drinks',
+        dessert: 'Dessert',
+        deals: 'Fast Food',
+        pasta: 'Fast Food',
+        snack: 'Fast Food',
+        'fast food': 'Fast Food'
+    };
+
+    return aliases[lower] || value;
+}
+
 async function addFood() {
     let name = document.getElementById("foodName").value.trim();
     let size = document.getElementById("foodSize").value;
     let price = document.getElementById("foodPrice").value;
-    let category = document.getElementById("foodCategory").value;
+    let category = normalizeCategory(document.getElementById("foodCategory").value);
     let imageFile = document.getElementById("foodImage").files[0];
 
     if (!name || !size || !price || !category) {
@@ -52,7 +71,8 @@ async function addFood() {
                 return;
             }
 
-            imageName = uploadData.filename;
+            // Cloudinary returns a permanent URL in imageUrl
+            imageName = uploadData.imageUrl || uploadData.filename;
         }
 
         const foodPayload = {
@@ -128,14 +148,18 @@ function formatPrices(sizes) {
     return sizes.map((item) => `${item.size}: ${item.price}`).join(" | ");
 }
 
+function buildFoodImageUrl(image) {
+    if (!image) return "https://via.placeholder.com/48?text=No+Img";
+    if (image.startsWith("http://") || image.startsWith("https://")) return image;
+    return `${BACKEND_URL}/images/${image}`;
+}
+
 function renderTable(foods) {
     let table = document.getElementById("foodTable");
     table.innerHTML = "";
 
     foods.forEach(food => {
-        const imageSrc = food.image
-            ? `${BACKEND_URL}/images/${food.image}`
-            : "https://via.placeholder.com/48?text=No+Img";
+        const imageSrc = buildFoodImageUrl(food.image);
 
         table.innerHTML += `
             <tr>
@@ -144,7 +168,7 @@ function renderTable(foods) {
                 <td>${food.name}</td>
                 <td>${formatSizes(food.sizes)}</td>
                 <td>${formatPrices(food.sizes)}</td>
-                <td>${food.category}</td>
+                <td>${normalizeCategory(food.category)}</td>
                 <td>
                     <button class="btn-delete" onclick="deleteFood('${food._id}')">Delete</button>
                 </td>
