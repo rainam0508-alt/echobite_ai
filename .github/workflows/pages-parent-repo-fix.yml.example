@@ -1,0 +1,53 @@
+# Use this ONLY if you deploy from a PARENT repo that contains echobite_ai
+# as a nested folder (not as a submodule).
+#
+# 1. Rename this file to deploy-pages.yml in the PARENT repo's .github/workflows/
+# 2. Fix the submodule error permanently:
+#    git rm --cached echobite_ai
+#    Remove-Item -Recurse -Force echobite_ai\.git   (Windows)
+#    git add echobite_ai
+#    git commit -m "Fix echobite_ai submodule issue"
+#    git push
+#
+# Better: deploy only https://github.com/rainam0508-alt/echobite_ai
+# using deploy-pages.yml in that repo (already included).
+
+name: Deploy GitHub Pages (parent repo)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Prepare echobite_ai static site
+        run: |
+          mkdir -p _site
+          cd echobite_ai
+          cp .nojekyll ../_site/ 2>/dev/null || touch ../_site/.nojekyll
+          cp -f *.html ../_site/ 2>/dev/null || true
+          cp -f *.js ../_site/ 2>/dev/null || true
+          cp -f *.css ../_site/ 2>/dev/null || true
+          cp -rf admin ../_site/
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
